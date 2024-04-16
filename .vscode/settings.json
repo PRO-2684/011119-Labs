@@ -2,6 +2,8 @@
     "files.associations": {
         "*.py": "python",
         "queue": "cpp",
-        "vector": "cpp"
+        "vector": "cpp",
+        "utility": "cpp",
+        "xstring": "cpp"
     }
 }
