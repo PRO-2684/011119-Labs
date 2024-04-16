@@ -10,7 +10,7 @@ using namespace std;
 
 struct Map_Cell {
     int type;  // 0: 可通行, 1: 不可通行, 2: 补给点, 3: 起点, 4: 终点
-    // FIXME: 定义地图信息
+    // DONE: 定义地图信息
     int x;  // 横坐标
     int y;  // 纵坐标
 };
@@ -18,7 +18,7 @@ struct Map_Cell {
 struct Search_Cell {
     int h;  // 启发式函数值
     int g;  // 起点到当前点的代价
-    // FIXME: 定义搜索状态
+    // DONE: 定义搜索状态
     int x;                // 当前横坐标
     int y;                // 当前纵坐标
     int q;                // 剩余步数
@@ -32,7 +32,7 @@ struct CompareF {
     }
 };
 
-// FIXME: 定义启发式函数：当前节点到终点的曼哈顿距离
+// DONE: 定义启发式函数：当前节点到终点的曼哈顿距离
 int Heuristic_Funtion(Search_Cell* cell, pair<int, int> end_point) {
     // return 0; // 无启发式函数时，退化为一致代价搜索
     return abs(cell->x - end_point.first) + abs(cell->y - end_point.second);
@@ -97,7 +97,7 @@ void Astar_search(const string input_file, int& step_nums, string& way) {
     open_list.push(search_cell);                                             // 将起点加入 open_list
 
     while (!open_list.empty()) {
-        // FIXME: A* 搜索过程实现
+        // DONE: A* 搜索过程实现
         Search_Cell* current_cell = open_list.top();
         open_list.pop();
         close_list.push_back(current_cell);
@@ -118,10 +118,10 @@ void Astar_search(const string input_file, int& step_nums, string& way) {
             new_cell->x = new_x;
             new_cell->y = new_y;
             new_cell->q = current_cell->q - 1;
-            if (Map[new_x][new_y].type == 2) {
-                new_cell->q = T;  // 补给点，剩余步数恢复至最大步数
+            if (Map[new_x][new_y].type == 2 || Map[new_x][new_y].type == 4) {
+                new_cell->q = T;  // 补给点或终点，剩余步数恢复至最大步数
             }
-            if (new_cell->q < 0) {
+            if (new_cell->q <= 0) {
                 continue;  // 剩余步数不足
             }
             new_cell->g = current_cell->g + 1;
@@ -129,32 +129,20 @@ void Astar_search(const string input_file, int& step_nums, string& way) {
             new_cell->parent = current_cell;
             bool flag = false;  // 是否在 close_list 中
             for (int j = 0; j < close_list.size(); j++) {
-                if (new_cell->x == close_list[j]->x && new_cell->y == close_list[j]->y) {
-                    flag = true;
+                if (new_cell->x == close_list[j]->x && new_cell->y == close_list[j]->y && new_cell->q <= close_list[j]->q && new_cell->g >= close_list[j]->g) {
+                    flag = true; // 已经探索过相同或更优的节点
                     break;
                 }
             }
             if (flag) {  // 已经探索过
                 continue;
             }
-            for (int j = 0; j < open_list.size(); j++) {
-                if (new_cell->x == open_list.top()->x && new_cell->y == open_list.top()->y) {
-                    if (new_cell->g + new_cell->h < open_list.top()->g + open_list.top()->h) {
-                        open_list.pop();
-                        open_list.push(new_cell);
-                    }
-                    flag = true;  // 发现更优节点
-                    break;
-                }
-            }
-            if (!flag) {
-                open_list.push(new_cell);
-            }
+            open_list.push(new_cell);
         }
     }
 
     // ------------------------------------------------------------------
-    // FIXME: 填充 step_nums 与 way
+    // DONE: 填充 step_nums 与 way
 
     const Search_Cell* last_cell = close_list[close_list.size() - 1];
     if (close_list.size() == 0 || last_cell->x != end_point.first || last_cell->y != end_point.second) {
@@ -212,19 +200,21 @@ void output(const string output_file, int& step_nums, string& way) {
 
 int main(int argc, char* argv[]) {
     // 所有测试用例
-    // string input_base = "../input/input_";
-    // string output_base = "../output/output_";
-    // for (int i = 1; i < 10; i++) {
-    //     int step_nums = -1;
-    //     string way = "";
-    //     Astar_search(input_base + to_string(i) + ".txt", step_nums, way);
-    //     output(output_base + to_string(i) + ".txt", step_nums, way);
-    // }
+    string input_base = "../input/input_";
+    string output_base = "../output/output_";
+    for (int i = 1; i < 11; i++) {
+        int step_nums = -1;
+        string way = "";
+        cout << "Processing input_" << i << ".txt" << endl;
+        Astar_search(input_base + to_string(i) + ".txt", step_nums, way);
+        output(output_base + to_string(i) + ".txt", step_nums, way);
+        cout << "Done!" << endl;
+    }
 
     // 单个测试用例
-    int step_nums = -1;
-    string way = "";
-    Astar_search("../input/input_7.txt", step_nums, way);
-    output("../output/output_7.txt", step_nums, way);
+    // int step_nums = -1;
+    // string way = "";
+    // Astar_search("../input/input_7.txt", step_nums, way);
+    // output("../output/output_7.txt", step_nums, way);
     return 0;
 }
