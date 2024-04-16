@@ -11,8 +11,6 @@ using namespace std;
 struct Map_Cell {
     int type;  // 0: 可通行, 1: 不可通行, 2: 补给点, 3: 起点, 4: 终点
     // DONE: 定义地图信息
-    int x;  // 横坐标
-    int y;  // 纵坐标
 };
 
 struct Search_Cell {
@@ -72,8 +70,8 @@ void Astar_search(const string input_file, int& step_nums, string& way) {
         }
         for (int j = 0; j < N; j++) {
             Map[i][j].type = stoi(words[j]);
-            Map[i][j].x = i;
-            Map[i][j].y = j;
+            // Map[i][j].x = i;
+            // Map[i][j].y = j;
             if (Map[i][j].type == 3) {
                 start_point = {i, j};
             } else if (Map[i][j].type == 4) {
