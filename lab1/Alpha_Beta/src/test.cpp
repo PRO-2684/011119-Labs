@@ -8,7 +8,7 @@ int alphaBeta(GameTreeNode node, int alpha, int beta, int depth, bool isMaximize
     if (depth == 0) {
         return node.getEvaluationScore();
     }
-    // TODO alpha-beta剪枝过程
+    // TODO: alpha-beta 剪枝过程
     return 0;
 }
 
@@ -34,8 +34,9 @@ int main() {
     file.close();
     GameTreeNode root(true, board, std::numeric_limits<int>::min());
 
-    // TODO
-    //  alphaBeta(root, )
+    // DONE: 调用 alphaBeta 函数
+    int depth = 3;
+    alphaBeta(root, std::numeric_limits<int>::min(), std::numeric_limits<int>::max(), depth, true);
 
     // 代码测试
     ChessBoard _board = root.getBoardClass();

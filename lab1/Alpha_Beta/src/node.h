@@ -6,97 +6,89 @@
 
 namespace ChineseChess {
 // 棋力评估，这里的棋盘方向和输入棋盘方向不同，在使用时需要仔细
-// NOTE: 已根据次对角线进行转置，与输入棋盘方向一致
 // 生成合法动作代码部分已经使用，经过测试是正确的，大家可以参考
 std::vector<std::vector<int>> JiangPosition = {
-    {0, 0, 0, 0, 0, 0, 0, 0, 0},
-    {0, 0, 0, 0, 0, 0, 0, 0, 0},
-    {0, 0, 0, 0, 0, 0, 0, 0, 0},
-    {0, 0, 0, 0, 0, 0, 0, 0, 0},
-    {0, 0, 0, 0, 0, 0, 0, 0, 0},
-    {0, 0, 0, 0, 0, 0, 0, 0, 0},
-    {0, 0, 0, 0, 0, 0, 0, 0, 0},
-    {0, 0, 0, -9, -9, -9, 0, 0, 0},
-    {0, 0, 0, -8, -8, -8, 0, 0, 0},
-    {0, 0, 0, 1, 5, 1, 0, 0, 0},
+    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+    {1, -8, -9, 0, 0, 0, 0, 0, 0, 0},
+    {5, -8, -9, 0, 0, 0, 0, 0, 0, 0},
+    {1, -8, -9, 0, 0, 0, 0, 0, 0, 0},
+    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
 };
 
 std::vector<std::vector<int>> ShiPosition = {
-    {0, 0, 0, 0, 0, 0, 0, 0, 0},
-    {0, 0, 0, 0, 0, 0, 0, 0, 0},
-    {0, 0, 0, 0, 0, 0, 0, 0, 0},
-    {0, 0, 0, 0, 0, 0, 0, 0, 0},
-    {0, 0, 0, 0, 0, 0, 0, 0, 0},
-    {0, 0, 0, 0, 0, 0, 0, 0, 0},
-    {0, 0, 0, 0, 0, 0, 0, 0, 0},
-    {0, 0, 0, 0, 0, 0, 0, 0, 0},
-    {0, 0, 0, 0, 3, 0, 0, 0, 0},
-    {0, 0, 0, 0, 0, 0, 0, 0, 0},
+    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+    {0, 3, 0, 0, 0, 0, 0, 0, 0, 0},
+    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
 };
 
 std::vector<std::vector<int>> XiangPosition = {
-    {0, 0, 0, 0, 0, 0, 0, 0, 0},
-    {0, 0, 0, 0, 0, 0, 0, 0, 0},
-    {0, 0, 0, 0, 0, 0, 0, 0, 0},
-    {0, 0, 0, 0, 0, 0, 0, 0, 0},
-    {0, 0, 0, 0, 0, 0, 0, 0, 0},
-    {0, 0, 0, 0, 0, 0, 0, 0, 0},
-    {0, 0, 0, 0, 0, 0, 0, 0, 0},
-    {-2, 0, 0, 0, 3, 0, 0, 0, -2},
-    {0, 0, 0, 0, 0, 0, 0, 0, 0},
-    {0, 0, 0, 0, 0, 0, 0, 0, 0},
+    {0, 0, -2, 0, 0, 0, 0, 0, 0, 0},
+    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+    {0, 0, 3, 0, 0, 0, 0, 0, 0, 0},
+    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+    {0, 0, -2, 0, 0, 0, 0, 0, 0, 0},
 };
 
 std::vector<std::vector<int>> MaPosition = {
-    {2, 2, 2, 8, 2, 8, 2, 2, 2},
-    {2, 8, 15, 9, 6, 9, 15, 8, 2},
-    {4, 10, 11, 15, 11, 15, 11, 10, 4},
-    {5, 20, 12, 19, 12, 19, 12, 20, 5},
-    {2, 12, 11, 15, 16, 15, 11, 12, 2},
-    {2, 10, 13, 14, 15, 14, 13, 10, 2},
-    {4, 6, 10, 7, 10, 7, 10, 6, 4},
-    {5, 4, 6, 7, 4, 7, 6, 4, 5},
-    {-3, 2, 4, 5, -10, 5, 4, 2, -3},
-    {0, -3, 2, 0, 2, 0, 2, -3, 0},
+    {0, -3, 5, 4, 2, 2, 5, 4, 2, 2},
+    {-3, 2, 4, 6, 10, 12, 20, 10, 8, 2},
+    {2, 4, 6, 10, 13, 11, 12, 11, 15, 2},
+    {0, 5, 7, 7, 14, 15, 19, 15, 9, 8},
+    {2, -10, 4, 10, 15, 16, 12, 11, 6, 2},
+    {0, 5, 7, 7, 14, 15, 19, 15, 9, 8},
+    {2, 4, 6, 10, 13, 11, 12, 11, 15, 2},
+    {-3, 2, 4, 6, 10, 12, 20, 10, 8, 2},
+    {0, -3, 5, 4, 2, 2, 5, 4, 2, 2},
 };
 
 std::vector<std::vector<int>> PaoPosition = {
-    {4, 4, 0, -5, -6, -5, 0, 4, 4},
-    {2, 2, 0, -4, -7, -4, 0, 2, 2},
-    {1, 1, 0, -5, -4, -5, 0, 1, 1},
-    {0, 3, 3, 2, 4, 2, 3, 3, 0},
-    {0, 0, 0, 0, 4, 0, 0, 0, 0},
-    {-1, 0, 3, 0, 4, 0, 3, 0, -1},
-    {0, 0, 0, 0, 0, 0, 0, 0, 0},
-    {1, 0, 4, 3, 5, 3, 4, 0, 1},
-    {0, 1, 2, 2, 2, 2, 2, 1, 0},
-    {0, 0, 1, 3, 3, 3, 1, 0, 0},
+    {0, 0, 1, 0, -1, 0, 0, 1, 2, 4},
+    {0, 1, 0, 0, 0, 0, 3, 1, 2, 4},
+    {1, 2, 4, 0, 3, 0, 3, 0, 0, 0},
+    {3, 2, 3, 0, 0, 0, 2, -5, -4, -5},
+    {3, 2, 5, 0, 4, 4, 4, -4, -7, -6},
+    {3, 2, 3, 0, 0, 0, 2, -5, -4, -5},
+    {1, 2, 4, 0, 3, 0, 3, 0, 0, 0},
+    {0, 1, 0, 0, 0, 0, 3, 1, 2, 4},
+    {0, 0, 1, 0, -1, 0, 0, 1, 2, 4},
 };
 
 std::vector<std::vector<int>> JuPosition = {
-    {6, 8, 7, 13, 14, 13, 7, 8, 6},
-    {6, 12, 9, 16, 33, 16, 9, 12, 6},
-    {6, 8, 7, 14, 16, 14, 7, 8, 6},
-    {6, 13, 13, 16, 16, 16, 13, 13, 6},
-    {8, 11, 11, 14, 15, 14, 11, 11, 8},
-    {8, 12, 12, 14, 15, 14, 12, 12, 8},
-    {4, 9, 4, 12, 14, 12, 4, 9, 4},
-    {-2, 8, 4, 12, 12, 12, 4, 8, -2},
-    {5, 8, 6, 12, 0, 12, 6, 8, 5},
-    {-6, 6, 4, 12, 0, 12, 4, 6, -6},
+    {-6, 5, -2, 4, 8, 8, 6, 6, 6, 6},
+    {6, 8, 8, 9, 12, 11, 13, 8, 12, 8},
+    {4, 6, 4, 4, 12, 11, 13, 7, 9, 7},
+    {12, 12, 12, 12, 14, 14, 16, 14, 16, 13},
+    {0, 0, 12, 14, 15, 15, 16, 16, 33, 14},
+    {12, 12, 12, 12, 14, 14, 16, 14, 16, 13},
+    {4, 6, 4, 4, 12, 11, 13, 7, 9, 7},
+    {6, 8, 8, 9, 12, 11, 13, 8, 12, 8},
+    {-6, 5, -2, 4, 8, 8, 6, 6, 6, 6},
 };
 
 std::vector<std::vector<int>> BingPosition = {
-    {0, 0, 0, 2, 4, 2, 0, 0, 0},
-    {20, 30, 50, 65, 70, 65, 50, 30, 20},
-    {20, 30, 45, 55, 55, 55, 45, 30, 20},
-    {20, 27, 30, 40, 42, 40, 30, 27, 20},
-    {10, 18, 22, 35, 40, 35, 22, 18, 10},
-    {3, 0, 4, 0, 7, 0, 4, 0, 3},
-    {-2, 0, -2, 0, 6, 0, -2, 0, -2},
-    {0, 0, 0, 0, 0, 0, 0, 0, 0},
-    {0, 0, 0, 0, 0, 0, 0, 0, 0},
-    {0, 0, 0, 0, 0, 0, 0, 0, 0},
+    {0, 0, 0, -2, 3, 10, 20, 20, 20, 0},
+    {0, 0, 0, 0, 0, 18, 27, 30, 30, 0},
+    {0, 0, 0, -2, 4, 22, 30, 45, 50, 0},
+    {0, 0, 0, 0, 0, 35, 40, 55, 65, 2},
+    {0, 0, 0, 6, 7, 40, 42, 55, 70, 4},
+    {0, 0, 0, 0, 0, 35, 40, 55, 65, 2},
+    {0, 0, 0, -2, 4, 22, 30, 45, 50, 0},
+    {0, 0, 0, 0, 0, 18, 27, 30, 30, 0},
+    {0, 0, 0, -2, 3, 10, 20, 20, 20, 0},
 };
 
 // 棋子价值评估
@@ -117,7 +109,7 @@ std::map<std::string, int> next_move_values = {
     {"Pao", 100},
     {"Bing", -20}};
 
-// 动作结构体，每个动作设置score，可以方便剪枝
+// 动作结构体，每个动作设置 score，可以方便剪枝
 struct Move {
     int init_x;
     int init_y;
@@ -130,7 +122,7 @@ struct Move {
 struct ChessPiece {
     char name;           // 棋子名称
     int init_x, init_y;  // 棋子的坐标
-    bool color;          // 棋子阵营 true为红色、false为黑色
+    bool color;          // 棋子阵营 true 为红色、false 为黑色
 };
 
 // 定义棋盘类
@@ -216,12 +208,7 @@ class ChessBoard {
         // 前后左右分别进行搜索，遇到棋子停止，不同阵营可以吃掉
         std::vector<Move> JuMoves;
         for (int i = x + 1; i < sizeY; i++) {
-            Move cur_move;
-            cur_move.init_x = x;
-            cur_move.init_y = y;
-            cur_move.next_x = i;
-            cur_move.next_y = y;
-            cur_move.score = 0;
+            Move cur_move = {x, y, i, y, 0};
             if (board[y][i] != '.') {
                 bool cur_color = (board[y][i] >= 'A' && board[y][i] <= 'Z');
                 if (cur_color != color) {
@@ -233,12 +220,7 @@ class ChessBoard {
         }
 
         for (int i = x - 1; i >= 0; i--) {
-            Move cur_move;
-            cur_move.init_x = x;
-            cur_move.init_y = y;
-            cur_move.next_x = i;
-            cur_move.next_y = y;
-            cur_move.score = 0;
+            Move cur_move = {x, y, i, y, 0};
             if (board[y][i] != '.') {
                 bool cur_color = (board[y][i] >= 'A' && board[y][i] <= 'Z');
                 if (cur_color != color) {
@@ -250,12 +232,7 @@ class ChessBoard {
         }
 
         for (int j = y + 1; j < sizeX; j++) {
-            Move cur_move;
-            cur_move.init_x = x;
-            cur_move.init_y = y;
-            cur_move.next_x = x;
-            cur_move.next_y = j;
-            cur_move.score = 0;
+            Move cur_move = {x, y, x, j, 0};
             if (board[j][x] != '.') {
                 bool cur_color = (board[j][x] >= 'A' && board[j][x] <= 'Z');
                 if (cur_color != color) {
@@ -267,12 +244,7 @@ class ChessBoard {
         }
 
         for (int j = y - 1; j >= 0; j--) {
-            Move cur_move;
-            cur_move.init_x = x;
-            cur_move.init_y = y;
-            cur_move.next_x = x;
-            cur_move.next_y = j;
-            cur_move.score = 0;
+            Move cur_move = {x, y, x, j, 0};
             if (board[j][x] != '.') {
                 bool cur_color = (board[j][x] >= 'A' && board[j][x] <= 'Z');
                 if (cur_color != color) {
@@ -295,25 +267,20 @@ class ChessBoard {
 
     // 生成马的合法动作
     void generateMaMoves(int x, int y, bool color) {
-        // 便利所有可能动作，筛选
+        // 遍历所有可能动作，筛选
         std::vector<Move> MaMoves;
         int dx[] = {2, 1, -1, -2, -2, -1, 1, 2};
         int dy[] = {1, 2, 2, 1, -1, -2, -2, -1};
         // 简化，不考虑拌马脚
-        // TODO 可以实现拌马脚过程
+        // TODO: 可以实现拌马脚过程
         for (int i = 0; i < 8; i++) {
-            Move cur_move;
             int nx = x + dx[i];
             int ny = y + dy[i];
             if (nx < 0 || nx >= 9 || ny < 0 || ny >= 10)
                 continue;
-            cur_move.init_x = x;
-            cur_move.init_y = y;
-            cur_move.next_x = nx;
-            cur_move.next_y = ny;
-            cur_move.score = 0;
+            Move cur_move = {x, y, nx, ny, 0};
             if (board[ny][nx] != '.') {
-                // 注意棋盘坐标系，这里nx、ny相反是正确的
+                // 注意棋盘坐标系，这里 nx、ny 相反是正确的
                 bool cur_color = (board[ny][nx] >= 'A' && board[ny][nx] <= 'Z');
                 if (cur_color != color) {
                     MaMoves.push_back(cur_move);
@@ -337,7 +304,28 @@ class ChessBoard {
     void generatePaoMoves(int x, int y, bool color) {
         // 和车生成动作相似，需要考虑炮翻山吃子的情况
         std::vector<Move> PaoMoves;
-        // TODO
+        // FIXME:
+        for (int i = x + 1; i < sizeY; i++) {
+            Move cur_move = {x, y, i, y, 0};
+            if (board[y][i] != '.') {
+                int next_x = -1;
+                for (int j = i + 1; j < sizeY; j++) { // 遍历后续位置
+                    if (board[y][j] != '.') {          // 遇到棋子
+                        bool cur_color = (board[y][j] >= 'A' && board[y][j] <= 'Z');
+                        if (cur_color != color) { // 遇到对方棋子
+                            next_x = j; // 可以吃子
+                        }
+                        break;
+                    }
+                }
+                if (next_x != -1) { // 可以吃子
+                    cur_move.next_x = next_x;
+                } else { // 不能吃子 - 不能走
+                    break;
+                }
+            }
+            PaoMoves.push_back(cur_move);
+        }
 
         for (int i = 0; i < PaoMoves.size(); i++) {
             if (color) {
@@ -353,7 +341,25 @@ class ChessBoard {
     // 生成相的合法动作
     void generateXiangMoves(int x, int y, bool color) {
         std::vector<Move> XiangMoves;
-        // TODO
+        // FIXME:
+        int dx[] = {2, 2, -2, -2};
+        int dy[] = {2, -2, 2, -2};
+        for (int i = 0; i < 4; i++) {
+            int nx = x + dx[i];
+            int ny = y + dy[i];
+            if (nx < 0 || nx >= 9 || ny < 0 || ny >= 10)
+                continue;
+            Move cur_move = {x, y, nx, ny, 0};
+            if (board[ny][nx] != '.') {
+                // 注意棋盘坐标系，这里 nx、ny 相反是正确的
+                bool cur_color = (board[ny][nx] >= 'A' && board[ny][nx] <= 'Z');
+                if (cur_color != color) {
+                    XiangMoves.push_back(cur_move);
+                }
+                continue;
+            }
+            XiangMoves.push_back(cur_move);
+        }
 
         for (int i = 0; i < XiangMoves.size(); i++) {
             if (color) {
@@ -369,7 +375,7 @@ class ChessBoard {
     // 生成士的合法动作
     void generateShiMoves(int x, int y, bool color) {
         std::vector<Move> ShiMoves;
-        // TODO
+        // TODO:
 
         for (int i = 0; i < ShiMoves.size(); i++) {
             if (color) {
@@ -385,7 +391,7 @@ class ChessBoard {
     // 生成将的合法动作
     void generateJiangMoves(int x, int y, bool color) {
         std::vector<Move> JiangMoves;
-        // TODO
+        // TODO:
 
         for (int i = 0; i < JiangMoves.size(); i++) {
             if (color) {
@@ -402,7 +408,7 @@ class ChessBoard {
     void generateBingMoves(int x, int y, bool color) {
         // 需要分条件考虑，小兵在过楚河汉界之前只能前进，之后可以左右前
         std::vector<Move> BingMoves;
-        // TODO
+        // TODO:
 
         for (int i = 0; i < BingMoves.size(); i++) {
             if (color) {
@@ -417,13 +423,13 @@ class ChessBoard {
 
     // 终止判断
     bool judgeTermination() {
-        // TODO
+        // TODO:
         return false;
     }
 
-    // 棋盘分数评估，根据当前棋盘进行棋子价值和棋力评估，max玩家减去min玩家分数
+    // 棋盘分数评估，根据当前棋盘进行棋子价值和棋力评估，max 玩家减去 min 玩家分数
     int evaluateNode() {
-        // TODO
+        // TODO:
         return 0;
     }
 
@@ -469,7 +475,7 @@ class GameTreeNode {
 
     // 根据当前棋盘和动作构建新棋盘（子节点）
     GameTreeNode* updateBoard(std::vector<std::vector<char>> cur_board, Move move, bool color) {
-        // TODO
+        // TODO:
         GameTreeNode* test;
         return test;
     }
