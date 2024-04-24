@@ -603,13 +603,13 @@ class ChessBoard {
     }
 
     // 测试接口
-    std::vector<Move> getMoves(bool color) {
+    std::vector<Move>* getMoves(bool color) {
         if (color)
-            return red_moves;
-        return black_moves;
+            return &red_moves;
+        return &black_moves;
     }
 
-    std::vector<ChessPiece> getChessPiece() {
+    std::vector<ChessPiece> getChessPiece() { // Unused?
         return pieces;
     }
 
@@ -651,25 +651,23 @@ class GameTreeNode {
     }
 
     // 返回棋盘类
-    ChessBoard getBoardClass() {
-        return board;
-    }
-
-    void expand() {
+    ChessBoard* getBoardClass() {
+        return &board;
     }
 
     // 返回子节点列表 (Lazy Evaluation)
-    std::vector<GameTreeNode*> getChildren() {
+    std::vector<GameTreeNode*>* getChildren() {
+        // FIXME:
         if (children.empty()) {
             std::vector<std::vector<char>>* cur_board = board.getBoard();
-            std::vector<Move> moves = board.getMoves(color);
+            std::vector<Move>* moves = board.getMoves(color);
             // 为合法动作创建子节点
-            for (int i = 0; i < moves.size(); i++) {
-                GameTreeNode* child = updateBoard(cur_board, moves[i], color);
+            for (int i = 0; i < moves->size(); i++) {
+                GameTreeNode* child = updateBoard(cur_board, moves->at(i), color);
                 children.push_back(child);
             }
         }
-        return children;
+        return &children;
     }
 
     ~GameTreeNode() {
