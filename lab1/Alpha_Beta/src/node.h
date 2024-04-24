@@ -7,7 +7,8 @@
 namespace ChineseChess {
 // 棋力评估，这里的棋盘方向和输入棋盘方向不同，在使用时需要仔细
 // 生成合法动作代码部分已经使用，经过测试是正确的，大家可以参考
-std::vector<std::vector<int>> JiangPosition = { // 非棋盘坐标系
+std::vector<std::vector<int>> JiangPosition = {
+    // 非棋盘坐标系
     {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
     {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
     {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
@@ -19,7 +20,8 @@ std::vector<std::vector<int>> JiangPosition = { // 非棋盘坐标系
     {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
 };
 
-std::vector<std::vector<int>> ShiPosition = { // 非棋盘坐标系
+std::vector<std::vector<int>> ShiPosition = {
+    // 非棋盘坐标系
     {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
     {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
     {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
@@ -31,7 +33,8 @@ std::vector<std::vector<int>> ShiPosition = { // 非棋盘坐标系
     {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
 };
 
-std::vector<std::vector<int>> XiangPosition = { // 非棋盘坐标系
+std::vector<std::vector<int>> XiangPosition = {
+    // 非棋盘坐标系
     {0, 0, -2, 0, 0, 0, 0, 0, 0, 0},
     {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
     {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
@@ -43,7 +46,8 @@ std::vector<std::vector<int>> XiangPosition = { // 非棋盘坐标系
     {0, 0, -2, 0, 0, 0, 0, 0, 0, 0},
 };
 
-std::vector<std::vector<int>> MaPosition = { // 非棋盘坐标系
+std::vector<std::vector<int>> MaPosition = {
+    // 非棋盘坐标系
     {0, -3, 5, 4, 2, 2, 5, 4, 2, 2},
     {-3, 2, 4, 6, 10, 12, 20, 10, 8, 2},
     {2, 4, 6, 10, 13, 11, 12, 11, 15, 2},
@@ -55,7 +59,8 @@ std::vector<std::vector<int>> MaPosition = { // 非棋盘坐标系
     {0, -3, 5, 4, 2, 2, 5, 4, 2, 2},
 };
 
-std::vector<std::vector<int>> PaoPosition = { // 非棋盘坐标系
+std::vector<std::vector<int>> PaoPosition = {
+    // 非棋盘坐标系
     {0, 0, 1, 0, -1, 0, 0, 1, 2, 4},
     {0, 1, 0, 0, 0, 0, 3, 1, 2, 4},
     {1, 2, 4, 0, 3, 0, 3, 0, 0, 0},
@@ -67,7 +72,8 @@ std::vector<std::vector<int>> PaoPosition = { // 非棋盘坐标系
     {0, 0, 1, 0, -1, 0, 0, 1, 2, 4},
 };
 
-std::vector<std::vector<int>> JuPosition = { // 非棋盘坐标系
+std::vector<std::vector<int>> JuPosition = {
+    // 非棋盘坐标系
     {-6, 5, -2, 4, 8, 8, 6, 6, 6, 6},
     {6, 8, 8, 9, 12, 11, 13, 8, 12, 8},
     {4, 6, 4, 4, 12, 11, 13, 7, 9, 7},
@@ -79,7 +85,8 @@ std::vector<std::vector<int>> JuPosition = { // 非棋盘坐标系
     {-6, 5, -2, 4, 8, 8, 6, 6, 6, 6},
 };
 
-std::vector<std::vector<int>> BingPosition = { // 非棋盘坐标系
+std::vector<std::vector<int>> BingPosition = {
+    // 非棋盘坐标系
     {0, 0, 0, -2, 3, 10, 20, 20, 20, 0},
     {0, 0, 0, 0, 0, 18, 27, 30, 30, 0},
     {0, 0, 0, -2, 4, 22, 30, 45, 50, 0},
@@ -112,8 +119,7 @@ std::map<std::string, int> next_move_values = {
     {"n", 100},
     {"r", 500},
     {"c", 100},
-    {"p", -20}
-};
+    {"p", -20}};
 
 // 动作结构体，每个动作设置 score，可以方便剪枝 (非棋盘坐标系)
 struct Move {
@@ -302,11 +308,11 @@ class ChessBoard {
                 // 注意棋盘坐标系，这里 nx、ny 相反是正确的
                 bool cur_color = colorOf(board[ny][nx]);
                 if (cur_color != color) {
-                    MaMoves.push_back(cur_move); // 可以吃子
+                    MaMoves.push_back(cur_move);  // 可以吃子
                 }
                 continue;
             }
-            MaMoves.push_back(cur_move); // 可以走
+            MaMoves.push_back(cur_move);  // 可以走
         }
         for (int i = 0; i < MaMoves.size(); i++) {
             if (color) {
@@ -328,18 +334,18 @@ class ChessBoard {
             Move cur_move = {x, y, i, y, 0};
             if (board[y][i] != '.') {
                 int next_x = -1;
-                for (int j = i + 1; j < sizeY; j++) { // 遍历后续位置
+                for (int j = i + 1; j < sizeY; j++) {  // 遍历后续位置
                     if (board[y][j] != '.') {          // 遇到棋子
                         bool cur_color = colorOf(board[y][j]);
-                        if (cur_color != color) { // 遇到对方棋子
-                            next_x = j; // 可以吃子
+                        if (cur_color != color) {  // 遇到对方棋子
+                            next_x = j;            // 可以吃子
                         }
                         break;
                     }
                 }
-                if (next_x != -1) { // 可以吃子
+                if (next_x != -1) {  // 可以吃子
                     cur_move.next_x = next_x;
-                } else { // 不能吃子 - 不能走
+                } else {  // 不能吃子 - 不能走
                     break;
                 }
             }
@@ -369,17 +375,17 @@ class ChessBoard {
             if (nx < 0 || nx >= 9 || ny < 0 || ny >= 10)
                 continue;
             if (color && ny < 5 || !color && ny >= 5)
-                continue; // 相不能过河
+                continue;  // 相不能过河
             Move cur_move = {x, y, nx, ny, 0};
             if (board[ny][nx] != '.') {
-                bool cur_color = colorOf(board[ny][nx]); // 挡路棋子颜色
+                bool cur_color = colorOf(board[ny][nx]);  // 挡路棋子颜色
                 // 注意棋盘坐标系，这里 nx、ny 相反是正确的
                 if (cur_color != color) {
-                    XiangMoves.push_back(cur_move); // 可以吃子
+                    XiangMoves.push_back(cur_move);  // 可以吃子
                 }
                 continue;
             }
-            XiangMoves.push_back(cur_move); // 可以走
+            XiangMoves.push_back(cur_move);  // 可以走
         }
 
         for (int i = 0; i < XiangMoves.size(); i++) {
@@ -402,20 +408,20 @@ class ChessBoard {
         for (int i = 0; i < 4; i++) {
             int nx = x + dx[i];
             int ny = y + dy[i];
-            if (nx < 3 || nx >= 6 ||  ny < 0 || ny >= 10)
-                continue; // 士的活动范围
+            if (nx < 3 || nx >= 6 || ny < 0 || ny >= 10)
+                continue;  // 士的活动范围
             if (color && ny < 7 || !color && ny >= 3)
-                continue; // 士不能出此方的九宫格
+                continue;  // 士不能出此方的九宫格
             Move cur_move = {x, y, nx, ny, 0};
             if (board[ny][nx] != '.') {
-                bool cur_color = colorOf(board[ny][nx]); // 挡路棋子颜色
+                bool cur_color = colorOf(board[ny][nx]);  // 挡路棋子颜色
                 // 注意棋盘坐标系，这里 nx、ny 相反是正确的
                 if (cur_color != color) {
-                    ShiMoves.push_back(cur_move); // 可以吃子
+                    ShiMoves.push_back(cur_move);  // 可以吃子
                 }
                 continue;
             }
-            ShiMoves.push_back(cur_move); // 可以走
+            ShiMoves.push_back(cur_move);  // 可以走
         }
 
         for (int i = 0; i < ShiMoves.size(); i++) {
@@ -439,19 +445,19 @@ class ChessBoard {
             int nx = x + dx[i];
             int ny = y + dy[i];
             if (nx < 3 || nx >= 6 || ny < 0 || ny >= 10)
-                continue; // 将的活动范围
+                continue;  // 将的活动范围
             if (color && ny < 7 || !color && ny >= 3)
-                continue; // 将不能出此方的九宫格
+                continue;  // 将不能出此方的九宫格
             Move cur_move = {x, y, nx, ny, 0};
             if (board[ny][nx] != '.') {
-                bool cur_color = colorOf(board[ny][nx]); // 挡路棋子颜色
+                bool cur_color = colorOf(board[ny][nx]);  // 挡路棋子颜色
                 // 注意棋盘坐标系，这里 nx、ny 相反是正确的
                 if (cur_color != color) {
-                    JiangMoves.push_back(cur_move); // 可以吃子
+                    JiangMoves.push_back(cur_move);  // 可以吃子
                 }
                 continue;
             }
-            JiangMoves.push_back(cur_move); // 可以走
+            JiangMoves.push_back(cur_move);  // 可以走
         }
 
         for (int i = 0; i < JiangMoves.size(); i++) {
@@ -470,12 +476,12 @@ class ChessBoard {
         // 需要分条件考虑，小兵在过楚河汉界之前只能前进，之后可以左右前
         std::vector<Move> BingMoves;
         // FIXME:
-        if (color) { // 红色方
+        if (color) {  // 红色方
             Move cur_move = {x, y, x, y - 1, 0};
             if (board[y - 1][x] == '.' || colorOf(board[y - 1][x]) == false) {
-                BingMoves.push_back(cur_move); // 可以前进或吃子
+                BingMoves.push_back(cur_move);  // 可以前进或吃子
             }
-            if (y < 5) { // 过河之后
+            if (y < 5) {  // 过河之后
                 cur_move = {x, y, x + 1, y, 0};
                 if (x < 8 && (board[y][x + 1] == '.' || colorOf(board[y][x + 1]) == false)) {
                     BingMoves.push_back(cur_move);
@@ -485,12 +491,12 @@ class ChessBoard {
                     BingMoves.push_back(cur_move);
                 }
             }
-        } else { // 黑色方
+        } else {  // 黑色方
             Move cur_move = {x, y, x, y + 1, 0};
             if (board[y + 1][x] == '.' || colorOf(board[y + 1][x]) == true) {
-                BingMoves.push_back(cur_move); // 可以前进或吃子
+                BingMoves.push_back(cur_move);  // 可以前进或吃子
             }
-            if (y >= 5) { // 过河之后
+            if (y >= 5) {  // 过河之后
                 cur_move = {x, y, x + 1, y, 0};
                 if (x < 8 && (board[y][x + 1] == '.' || colorOf(board[y][x + 1]) == true)) {
                     BingMoves.push_back(cur_move);
@@ -517,8 +523,8 @@ class ChessBoard {
     bool judgeTermination() {
         // FIXME:
         // 判断是否结束
-        bool red_king = false; // 是否有红将
-        bool black_king = false; // 是否有黑将
+        bool red_king = false;    // 是否有红将
+        bool black_king = false;  // 是否有黑将
         for (int i = 0; i < pieces.size(); i++) {
             if (pieces[i].name == 'K') {
                 red_king = true;
@@ -609,7 +615,7 @@ class ChessBoard {
         return &black_moves;
     }
 
-    std::vector<ChessPiece> getChessPiece() { // Unused?
+    std::vector<ChessPiece> getChessPiece() {  // Unused?
         return pieces;
     }
 

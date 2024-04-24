@@ -4,15 +4,15 @@
 using namespace ChineseChess;
 
 // 博弈树搜索，depth为搜索深度
-int alphaBeta(GameTreeNode * node, int alpha, int beta, int depth, bool isMaximizer) {
-    std::vector<GameTreeNode *>* children = node->getChildren();
-    if (depth == 0 || children->empty()) { // 叶子节点或者搜索到最大深度
+int alphaBeta(GameTreeNode* node, int alpha, int beta, int depth, bool isMaximizer) {
+    std::vector<GameTreeNode*>* children = node->getChildren();
+    if (depth == 0 || children->empty() || node->getBoardClass()->judgeTermination()) {  // 叶子节点，或者搜索到最大深度，或者棋局结束
         return node->getEvaluationScore();
     }
     // FIXME: alpha-beta 剪枝过程
     if (isMaximizer) {
         int maxEval = std::numeric_limits<int>::min();
-        for (GameTreeNode * child : *children) {
+        for (GameTreeNode* child : *children) {
             int eval = alphaBeta(child, alpha, beta, depth - 1, false);
             maxEval = std::max(maxEval, eval);
             alpha = std::max(alpha, eval);
@@ -23,7 +23,7 @@ int alphaBeta(GameTreeNode * node, int alpha, int beta, int depth, bool isMaximi
         return maxEval;
     } else {
         int minEval = std::numeric_limits<int>::max();
-        for (GameTreeNode * child : *children) {
+        for (GameTreeNode* child : *children) {
             int eval = alphaBeta(child, alpha, beta, depth - 1, true);
             minEval = std::min(minEval, eval);
             beta = std::min(beta, eval);
@@ -36,8 +36,8 @@ int alphaBeta(GameTreeNode * node, int alpha, int beta, int depth, bool isMaximi
 }
 
 int main(int argc, char* argv[]) {
-    int fn = 1; // 默认文件编号
-    if (argc > 1) { // 命令行参数
+    int fn = 1;      // 默认文件编号
+    if (argc > 1) {  // 命令行参数
         fn = std::stoi(argv[1]);
     }
     std::string filename = "../input/" + std::to_string(fn) + ".txt";
