@@ -277,6 +277,7 @@ class ChessBoard {
             }
             JuMoves.push_back(cur_move);
         }
+
         for (int i = 0; i < JuMoves.size(); i++) {
             if (color) {
                 JuMoves[i].score = JuPosition[JuMoves[i].next_x][9 - JuMoves[i].next_y] - JuPosition[x][9 - y];
@@ -327,7 +328,6 @@ class ChessBoard {
     void generatePaoMoves(int x, int y, bool color) {
         // 和车生成动作相似，需要考虑炮翻山吃子的情况
         std::vector<Move> PaoMoves;
-        // FIXME:
         for (int i = x + 1; i < sizeY; i++) {
             Move cur_move = {x, y, i, y, 0};
             if (board[y][i] != '.') {
@@ -343,11 +343,81 @@ class ChessBoard {
                 }
                 if (next_x != -1) {  // 可以吃子
                     cur_move.next_x = next_x;
-                } else {  // 不能吃子 - 不能走
-                    break;
+                    PaoMoves.push_back(cur_move);
                 }
+                break;
+            } else { // 无阻拦
+                PaoMoves.push_back(cur_move);
             }
-            PaoMoves.push_back(cur_move);
+        }
+        
+        for (int i = x - 1; i >= 0; i--) {
+            Move cur_move = {x, y, i, y, 0};
+            if (board[y][i] != '.') {
+                int next_x = -1;
+                for (int j = i - 1; j >= 0; j--) {  // 遍历后续位置
+                    if (board[y][j] != '.') {          // 遇到棋子
+                        bool cur_color = colorOf(board[y][j]);
+                        if (cur_color != color) {  // 遇到对方棋子
+                            next_x = j;            // 可以吃子
+                        }
+                        break;
+                    }
+                }
+                if (next_x != -1) {  // 可以吃子
+                    cur_move.next_x = next_x;
+                    PaoMoves.push_back(cur_move);
+                }
+                break;
+            } else { // 无阻拦
+                PaoMoves.push_back(cur_move);
+            }
+        }
+
+        for (int j = y + 1; j < sizeX; j++) {
+            Move cur_move = {x, y, x, j, 0};
+            if (board[j][x] != '.') {
+                int next_y = -1;
+                for (int i = j + 1; i < sizeX; i++) {  // 遍历后续位置
+                    if (board[i][x] != '.') {          // 遇到棋子
+                        bool cur_color = colorOf(board[i][x]);
+                        if (cur_color != color) {  // 遇到对方棋子
+                            next_y = i;            // 可以吃子
+                        }
+                        break;
+                    }
+                }
+                if (next_y != -1) {  // 可以吃子
+                    cur_move.next_y = next_y;
+                    PaoMoves.push_back(cur_move);
+                }
+                break;
+            } else { // 无阻拦
+                PaoMoves.push_back(cur_move);
+            }
+        }
+
+        for (int j = y - 1; j >= 0; j--) {
+            Move cur_move = {x, y, x, j, 0};
+            if (board[j][x] != '.') {
+                int next_y = -1;
+                for (int i = j - 1; i >= 0; i--) {  // 遍历后续位置
+                    if (board[i][x] != '.') {          // 遇到棋子
+                        bool cur_color = colorOf(board[i][x]);
+                        if (cur_color != color) {  // 遇到对方棋子
+                            next_y = i;            // 可以吃子
+                        }
+                        break;
+                    }
+                }
+                if (next_y != -1) {  // 可以吃子
+                    cur_move.next_y = next_y;
+                    PaoMoves.push_back(cur_move);
+                }
+                break;
+            } else { // 无阻拦
+                PaoMoves.push_back(cur_move);
+            }
         }
 
         for (int i = 0; i < PaoMoves.size(); i++) {
@@ -364,7 +434,6 @@ class ChessBoard {
     // 生成相的合法动作 (非棋盘坐标系)
     void generateXiangMoves(int x, int y, bool color) {
         std::vector<Move> XiangMoves;
-        // FIXME:
         int dx[] = {2, 2, -2, -2};
         int dy[] = {2, -2, 2, -2};
         for (int i = 0; i < 4; i++) {
@@ -400,7 +469,6 @@ class ChessBoard {
     // 生成士的合法动作 (非棋盘坐标系)
     void generateShiMoves(int x, int y, bool color) {
         std::vector<Move> ShiMoves;
-        // FIXME:
         int dx[] = {1, 1, -1, -1};
         int dy[] = {1, -1, 1, -1};
         for (int i = 0; i < 4; i++) {
@@ -436,7 +504,6 @@ class ChessBoard {
     // 生成将的合法动作 (非棋盘坐标系)
     void generateJiangMoves(int x, int y, bool color) {
         std::vector<Move> JiangMoves;
-        // FIXME:
         int dx[] = {1, 0, -1, 0};
         int dy[] = {0, 1, 0, -1};
         for (int i = 0; i < 4; i++) {
@@ -473,7 +540,6 @@ class ChessBoard {
     void generateBingMoves(int x, int y, bool color) {
         // 需要分条件考虑，小兵在过楚河汉界之前只能前进，之后可以左右前
         std::vector<Move> BingMoves;
-        // FIXME:
         if (color) {  // 红色方
             Move cur_move = {x, y, x, y - 1, 0};
             if (board[y - 1][x] == '.' || colorOf(board[y - 1][x]) == false) {
