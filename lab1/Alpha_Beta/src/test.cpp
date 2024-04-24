@@ -36,24 +36,27 @@ int alphaBeta(GameTreeNode* node, int alpha, int beta, int depth, bool isMaximiz
 }
 
 int main(int argc, char* argv[]) {
-    int fn = 1;      // 默认文件编号
-    if (argc > 1) {  // 命令行参数
+    // 命令行参数：第一个参数为文件编号，第二个参数为搜索深度
+    int fn = 1;        // 默认文件编号
+    int maxDepth = 3;  // 默认搜索深度
+    if (argc > 1) {    // 命令行参数 fn
         fn = std::stoi(argv[1]);
     }
+    if (argc > 2) {  // 命令行参数 maxDepth
+        maxDepth = std::stoi(argv[2]);
+    }
+
     std::string filename = "../input/" + std::to_string(fn) + ".txt";
     std::ifstream file(filename);
-
-    std::vector<std::vector<char>> board;
-
     std::string line;
+    std::vector<std::vector<char>> board;
     int n = 0;
+
     while (std::getline(file, line)) {
         std::vector<char> row;
-
         for (char ch : line) {
             row.push_back(ch);
         }
-
         board.push_back(row);
         n = n + 1;
         if (n >= 10)
@@ -64,8 +67,7 @@ int main(int argc, char* argv[]) {
     GameTreeNode root(true, board, std::numeric_limits<int>::min());
 
     // DONE: 调用 alphaBeta 函数
-    int depth = 3;
-    int score = alphaBeta(&root, std::numeric_limits<int>::min(), std::numeric_limits<int>::max(), depth, true);
+    int score = alphaBeta(&root, std::numeric_limits<int>::min(), std::numeric_limits<int>::max(), maxDepth, true);
     std::cout << "The best score is " << score << std::endl;
 
     // 代码测试
