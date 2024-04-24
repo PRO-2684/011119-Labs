@@ -7,8 +7,9 @@
 namespace ChineseChess {
 // 棋力评估，这里的棋盘方向和输入棋盘方向不同，在使用时需要仔细
 // 生成合法动作代码部分已经使用，经过测试是正确的，大家可以参考
+
+// 非棋盘坐标系
 std::vector<std::vector<int>> JiangPosition = {
-    // 非棋盘坐标系
     {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
     {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
     {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
@@ -20,8 +21,8 @@ std::vector<std::vector<int>> JiangPosition = {
     {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
 };
 
+// 非棋盘坐标系
 std::vector<std::vector<int>> ShiPosition = {
-    // 非棋盘坐标系
     {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
     {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
     {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
@@ -33,8 +34,8 @@ std::vector<std::vector<int>> ShiPosition = {
     {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
 };
 
+// 非棋盘坐标系
 std::vector<std::vector<int>> XiangPosition = {
-    // 非棋盘坐标系
     {0, 0, -2, 0, 0, 0, 0, 0, 0, 0},
     {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
     {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
@@ -46,8 +47,8 @@ std::vector<std::vector<int>> XiangPosition = {
     {0, 0, -2, 0, 0, 0, 0, 0, 0, 0},
 };
 
+// 非棋盘坐标系
 std::vector<std::vector<int>> MaPosition = {
-    // 非棋盘坐标系
     {0, -3, 5, 4, 2, 2, 5, 4, 2, 2},
     {-3, 2, 4, 6, 10, 12, 20, 10, 8, 2},
     {2, 4, 6, 10, 13, 11, 12, 11, 15, 2},
@@ -59,8 +60,8 @@ std::vector<std::vector<int>> MaPosition = {
     {0, -3, 5, 4, 2, 2, 5, 4, 2, 2},
 };
 
+// 非棋盘坐标系
 std::vector<std::vector<int>> PaoPosition = {
-    // 非棋盘坐标系
     {0, 0, 1, 0, -1, 0, 0, 1, 2, 4},
     {0, 1, 0, 0, 0, 0, 3, 1, 2, 4},
     {1, 2, 4, 0, 3, 0, 3, 0, 0, 0},
@@ -72,8 +73,8 @@ std::vector<std::vector<int>> PaoPosition = {
     {0, 0, 1, 0, -1, 0, 0, 1, 2, 4},
 };
 
+// 非棋盘坐标系
 std::vector<std::vector<int>> JuPosition = {
-    // 非棋盘坐标系
     {-6, 5, -2, 4, 8, 8, 6, 6, 6, 6},
     {6, 8, 8, 9, 12, 11, 13, 8, 12, 8},
     {4, 6, 4, 4, 12, 11, 13, 7, 9, 7},
@@ -85,8 +86,8 @@ std::vector<std::vector<int>> JuPosition = {
     {-6, 5, -2, 4, 8, 8, 6, 6, 6, 6},
 };
 
+// 非棋盘坐标系
 std::vector<std::vector<int>> BingPosition = {
-    // 非棋盘坐标系
     {0, 0, 0, -2, 3, 10, 20, 20, 20, 0},
     {0, 0, 0, 0, 0, 18, 27, 30, 30, 0},
     {0, 0, 0, -2, 4, 22, 30, 45, 50, 0},
@@ -100,26 +101,23 @@ std::vector<std::vector<int>> BingPosition = {
 
 // 棋子价值评估
 std::map<std::string, int> piece_values = {
-    {"Jiang", 10000},
-    {"Shi", 10},
-    {"Xiang", 30},
-    {"Ma", 300},
-    {"Ju", 500},
-    {"Pao", 300},
-    {"Bing", 90}};
+    {"k", 10000},  // Jiang
+    {"a", 10},     // Shi
+    {"b", 30},     // Xiang
+    {"n", 300},    // Ma
+    {"r", 500},    // Ju
+    {"c", 300},    // Pao
+    {"p", 90}      // Bing
+};
 
 // 行棋可能性评估，这里更多是对下一步动作的评估
 std::map<std::string, int> next_move_values = {
-    // {"Jiang", 9999},
-    // {"Ma", 100},
-    // {"Ju", 500},
-    // {"Pao", 100},
-    // {"Bing", -20}
-    {"k", 9999},
-    {"n", 100},
-    {"r", 500},
-    {"c", 100},
-    {"p", -20}};
+    {"k", 9999},  // Jiang
+    {"n", 100},   // Ma
+    {"r", 500},   // Ju
+    {"c", 100},   // Pao
+    {"p", -20}    // Bing
+};
 
 // 动作结构体，每个动作设置 score，可以方便剪枝 (非棋盘坐标系)
 struct Move {
