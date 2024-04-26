@@ -130,9 +130,9 @@ struct Move {
 
 // 定义棋盘上的棋子结构体 (代码坐标系)
 struct ChessPiece {
-    char name;           // 棋子名称
-    int init_x, init_y;  // 棋子的坐标
-    bool color;          // 棋子阵营 true 为红色、false 为黑色
+    char name;   // 棋子名称
+    int x, y;    // 棋子的坐标
+    bool color;  // 棋子阵营 true 为红色、false 为黑色
 };
 
 // 定义棋盘类
@@ -170,8 +170,8 @@ class ChessBoard {
                     continue;
 
                 ChessPiece piece;
-                piece.init_x = j;
-                piece.init_y = i;
+                piece.x = j;
+                piece.y = i;
                 piece.color = colorOf(pieceChar);
                 piece.name = pieceChar;
                 pieces.push_back(piece);
@@ -346,17 +346,17 @@ class ChessBoard {
                     PaoMoves.push_back(cur_move);
                 }
                 break;
-            } else { // 无阻拦
+            } else {  // 无阻拦
                 PaoMoves.push_back(cur_move);
             }
         }
-        
+
         for (int i = x - 1; i >= 0; i--) {
             Move cur_move = {x, y, i, y, 0};
             if (board[y][i] != '.') {
                 int next_x = -1;
                 for (int j = i - 1; j >= 0; j--) {  // 遍历后续位置
-                    if (board[y][j] != '.') {          // 遇到棋子
+                    if (board[y][j] != '.') {       // 遇到棋子
                         bool cur_color = colorOf(board[y][j]);
                         if (cur_color != color) {  // 遇到对方棋子
                             next_x = j;            // 可以吃子
@@ -369,7 +369,7 @@ class ChessBoard {
                     PaoMoves.push_back(cur_move);
                 }
                 break;
-            } else { // 无阻拦
+            } else {  // 无阻拦
                 PaoMoves.push_back(cur_move);
             }
         }
@@ -392,7 +392,7 @@ class ChessBoard {
                     PaoMoves.push_back(cur_move);
                 }
                 break;
-            } else { // 无阻拦
+            } else {  // 无阻拦
                 PaoMoves.push_back(cur_move);
             }
         }
@@ -402,7 +402,7 @@ class ChessBoard {
             if (board[j][x] != '.') {
                 int next_y = -1;
                 for (int i = j - 1; i >= 0; i--) {  // 遍历后续位置
-                    if (board[i][x] != '.') {          // 遇到棋子
+                    if (board[i][x] != '.') {       // 遇到棋子
                         bool cur_color = colorOf(board[i][x]);
                         if (cur_color != color) {  // 遇到对方棋子
                             next_y = i;            // 可以吃子
@@ -415,7 +415,7 @@ class ChessBoard {
                     PaoMoves.push_back(cur_move);
                 }
                 break;
-            } else { // 无阻拦
+            } else {  // 无阻拦
                 PaoMoves.push_back(cur_move);
             }
         }
@@ -605,8 +605,8 @@ class ChessBoard {
         int red_score = 0;
         int black_score = 0;
         for (int i = 0; i < pieces.size(); i++) {
-            int x = pieces[i].init_x;
-            int y = pieces[i].init_y;
+            int x = pieces[i].x;
+            int y = pieces[i].y;
             char name = pieces[i].name;
             // 棋力评估：对每个棋子的位置进行评分
             switch (name) {
