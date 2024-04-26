@@ -112,7 +112,7 @@ std::map<std::string, int> piece_values = {
 
 // 行棋可能性评估，这里更多是对下一步动作的评估
 std::map<std::string, int> next_move_values = {
-    {"k", 9999},  // Jiang
+    {"k", 1000},  // Jiang
     {"n", 100},   // Ma
     {"r", 500},   // Ju
     {"c", 100},   // Pao
@@ -686,17 +686,18 @@ class ChessBoard {
                 black_score += piece_values[std::string(1, toLower(name))];
             }
         }
-        // FIXME: 行棋可能性评估：根据棋子下一步的可能动作来判断行棋的优劣
-        // for (int i = 0; i < red_moves.size(); i++) {
-        //     int x = red_moves[i].next_x;
-        //     int y = red_moves[i].next_y;
-        //     red_score += next_move_values[std::string(1, toLower(board[y][x]))];
-        // }
-        // for (int i = 0; i < black_moves.size(); i++) {
-        //     int x = black_moves[i].next_x;
-        //     int y = black_moves[i].next_y;
-        //     black_score += next_move_values[std::string(1, toLower(board[y][x]))];
-        // }
+        // 行棋可能性评估：根据棋子下一步的可能动作来判断行棋的优劣
+        // FIXME: 仅考虑当前着子的一方？
+        for (int i = 0; i < red_moves.size(); i++) {
+            int x = red_moves[i].next_x;
+            int y = red_moves[i].next_y;
+            red_score += next_move_values[std::string(1, toLower(board[y][x]))];
+        }
+        for (int i = 0; i < black_moves.size(); i++) {
+            int x = black_moves[i].next_x;
+            int y = black_moves[i].next_y;
+            black_score += next_move_values[std::string(1, toLower(board[y][x]))];
+        }
         return red_score - black_score;
     }
 
