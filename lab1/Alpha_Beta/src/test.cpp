@@ -10,8 +10,11 @@ void showMove(Move* move) {
 
 // 博弈树搜索，depth为搜索深度
 int alphaBeta(GameTreeNode* node, int alpha, int beta, int depth, bool isMaximizer, Move* best_move = nullptr) {
+    if (depth == 0 || node->getBoardClass()->judgeTermination()) {  // 叶子节点，或者搜索到最大深度，或者棋局结束
+        return node->getEvaluationScore();
+    }
     std::vector<GameTreeNode*>* children = node->getChildren();
-    if (depth == 0 || children->empty() || node->getBoardClass()->judgeTermination()) {  // 叶子节点，或者搜索到最大深度，或者棋局结束
+    if (children->empty()) {
         return node->getEvaluationScore();
     }
     // FIXME: alpha-beta 剪枝过程
@@ -120,6 +123,7 @@ void solve(int fn, int maxDepth, bool debug) {
     std::string output_filename = "../output/output_" + std::to_string(fn) + ".txt";
     std::ofstream output_file(output_filename);
     char piece = cur_board->at(best_move.init_y).at(best_move.init_x);
+    // 输出坐标系
     output_file << piece << " (" << best_move.init_x << ", " << 9 - best_move.init_y << ") ("
                 << best_move.next_x << ", " << 9 - best_move.next_y << ")" << std::endl;
 }
