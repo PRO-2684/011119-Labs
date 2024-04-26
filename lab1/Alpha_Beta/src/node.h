@@ -696,25 +696,26 @@ class ChessBoard {
 class GameTreeNode {
    private:
     bool color;                           // 当前玩家类型，true为红色方、false为黑色方
+    int evaluationScore;                  // 棋盘评估分数
     ChessBoard board;                     // 当前棋盘状态
     std::vector<GameTreeNode*> children;  // 子节点列表
-    int evaluationScore;                  // 棋盘评估分数
+    Move* move;                           // 父节点到当前节点的动作
 
    public:
     // 构造函数
-    GameTreeNode(bool color, std::vector<std::vector<char>> initBoard, int evaluationScore)
-        : color(color), evaluationScore(evaluationScore) {
+    GameTreeNode(bool color, std::vector<std::vector<char>> initBoard, int evaluationScore, Move* move = nullptr)
+        : color(color), evaluationScore(evaluationScore), move(move){
         board.initializeBoard(initBoard);
         children.clear();
     }
 
     // 根据当前棋盘和动作构建新棋盘（子节点）
-    GameTreeNode* updateBoard(std::vector<std::vector<char>>* cur_board, Move move, bool color) {
+    GameTreeNode* updateBoard(std::vector<std::vector<char>>* cur_board, Move* move, bool color) {
         // FIXME:
         std::vector<std::vector<char>> next_board = *cur_board;
-        next_board[move.next_y][move.next_x] = next_board[move.init_y][move.init_x];
-        next_board[move.init_y][move.init_x] = '.';
-        GameTreeNode* next_node = new GameTreeNode(!color, next_board, 0);
+        next_board[move->next_y][move->next_x] = next_board[move->init_y][move->init_x];
+        next_board[move->init_y][move->init_x] = '.';
+        GameTreeNode* next_node = new GameTreeNode(!color, next_board, 0, move);
         return next_node;
     }
 
@@ -737,7 +738,7 @@ class GameTreeNode {
             std::vector<Move>* moves = board.getMoves(color);
             // 为合法动作创建子节点
             for (int i = 0; i < moves->size(); i++) {
-                GameTreeNode* child = updateBoard(cur_board, moves->at(i), color);
+                GameTreeNode* child = updateBoard(cur_board, &(moves->at(i)), color);
                 children.push_back(child);
             }
         }
