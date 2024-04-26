@@ -126,7 +126,7 @@ void solve(int fn, int maxDepth, bool debug) {
 int main(int argc, char* argv[]) {
     // 命令行参数：第一个参数为文件编号，第二个参数为搜索深度
     int fn = -1;        // 默认文件编号
-    int maxDepth = 4;  // 默认搜索深度
+    int maxDepth = 5;  // 默认搜索深度
     if (argc > 1) {    // 命令行参数 fn
         fn = std::stoi(argv[1]);
     }
