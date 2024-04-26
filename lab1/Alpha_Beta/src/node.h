@@ -524,6 +524,27 @@ class ChessBoard {
             }
             JiangMoves.push_back(cur_move);  // 可以走
         }
+        // 飞将
+        int k1 = -1, k2 = -1;  // 黑、红两将的位置
+        for (int i = 0; i < sizeX; i++) {
+            if (k1 == -1 && board[i][x] == 'k') {
+                k1 = i;
+            } else if (k1 != -1 && board[i][x] == 'K') {
+                k2 = i;
+                break;
+            } else if (k1 != -1 && board[i][x] != '.') {
+                break;
+            }
+        }
+        if (k1 != -1 && k2 != -1) {  // 两将之间没有棋子
+            if (color) {             // 红将
+                Move cur_move = {x, y, x, k1, 0};
+                JiangMoves.push_back(cur_move);
+            } else {  // 黑将
+                Move cur_move = {x, y, x, k2, 0};
+                JiangMoves.push_back(cur_move);
+            }
+        }
 
         for (int i = 0; i < JiangMoves.size(); i++) {
             if (color) {
@@ -699,12 +720,12 @@ class GameTreeNode {
     int evaluationScore;                  // 棋盘评估分数
     ChessBoard board;                     // 当前棋盘状态
     std::vector<GameTreeNode*> children;  // 子节点列表
-    Move* move;                           // 父节点到当前节点的动作
 
    public:
+    Move* move;  // 父节点到当前节点的动作
     // 构造函数
     GameTreeNode(bool color, std::vector<std::vector<char>> initBoard, int evaluationScore, Move* move = nullptr)
-        : color(color), evaluationScore(evaluationScore), move(move){
+        : color(color), evaluationScore(evaluationScore), move(move) {
         board.initializeBoard(initBoard);
         children.clear();
     }
