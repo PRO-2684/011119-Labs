@@ -611,7 +611,6 @@ class ChessBoard {
 
     // 终止判断
     bool judgeTermination() {
-        // FIXME:
         // 判断是否结束
         bool red_king = false;    // 是否有红将
         bool black_king = false;  // 是否有黑将
@@ -627,7 +626,6 @@ class ChessBoard {
 
     // 棋盘分数评估，根据当前棋盘进行棋子价值和棋力评估，max 玩家减去 min 玩家分数
     int evaluateNode() {
-        // FIXME:
         int red_score = 0;
         int black_score = 0;
         for (int i = 0; i < pieces.size(); i++) {
@@ -688,7 +686,7 @@ class ChessBoard {
                 black_score += piece_values[std::string(1, toLower(name))];
             }
         }
-        // 行棋可能性评估：根据棋子下一步的可能动作来判断行棋的优劣
+        // FIXME: 行棋可能性评估：根据棋子下一步的可能动作来判断行棋的优劣
         // for (int i = 0; i < red_moves.size(); i++) {
         //     int x = red_moves[i].next_x;
         //     int y = red_moves[i].next_y;
@@ -737,7 +735,6 @@ class GameTreeNode {
 
     // 根据当前棋盘和动作构建新棋盘（子节点）
     GameTreeNode* updateBoard(std::vector<std::vector<char>>* cur_board, Move* move, bool color) {
-        // FIXME:
         std::vector<std::vector<char>> next_board = *cur_board;
         next_board[move->next_y][move->next_x] = next_board[move->init_y][move->init_x];
         next_board[move->init_y][move->init_x] = '.';
@@ -758,7 +755,6 @@ class GameTreeNode {
 
     // 返回子节点列表 (Lazy Evaluation)
     std::vector<GameTreeNode*>* getChildren() {
-        // FIXME:
         if (children.empty()) {
             std::vector<std::vector<char>>* cur_board = board.getBoard();
             std::vector<Move>* moves = board.getMoves(color);

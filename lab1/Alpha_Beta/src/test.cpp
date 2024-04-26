@@ -17,7 +17,7 @@ int alphaBeta(GameTreeNode* node, int alpha, int beta, int depth, bool isMaximiz
     if (children->empty()) {
         return node->getEvaluationScore();
     }
-    // FIXME: alpha-beta 剪枝过程
+    // DONE: alpha-beta 剪枝过程
     if (isMaximizer) {
         int maxEval = std::numeric_limits<int>::min();
         for (GameTreeNode* child : *children) {
