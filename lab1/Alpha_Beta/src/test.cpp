@@ -58,17 +58,8 @@ int alphaBeta(GameTreeNode* node, int alpha, int beta, int depth, bool isMaximiz
     }
 }
 
-int main(int argc, char* argv[]) {
-    // 命令行参数：第一个参数为文件编号，第二个参数为搜索深度
-    int fn = 1;        // 默认文件编号
-    int maxDepth = 3;  // 默认搜索深度
-    if (argc > 1) {    // 命令行参数 fn
-        fn = std::stoi(argv[1]);
-    }
-    if (argc > 2) {  // 命令行参数 maxDepth
-        maxDepth = std::stoi(argv[2]);
-    }
-
+void solve(int fn, int maxDepth, bool debug) {
+    std::cout << "Solving file " << fn << std::endl;
     std::string filename = "../input/" + std::to_string(fn) + ".txt";
     std::ifstream file(filename);
     std::string line;
@@ -98,32 +89,57 @@ int main(int argc, char* argv[]) {
     ChessBoard* _board = root.getBoardClass();
     std::vector<std::vector<char>>* cur_board = _board->getBoard();
 
-    for (int i = 0; i < cur_board->size(); i++) {
-        for (int j = 0; j < cur_board->at(0).size(); j++) {
-            std::cout << cur_board->at(i).at(j);
+    if (debug) {
+        for (int i = 0; i < cur_board->size(); i++) {
+            for (int j = 0; j < cur_board->at(0).size(); j++) {
+                std::cout << cur_board->at(i).at(j);
+            }
+            std::cout << std::endl;
         }
-        std::cout << std::endl;
-    }
 
-    std::vector<Move>* red_moves = _board->getMoves(true);
-    std::vector<Move>* black_moves = _board->getMoves(false);
+        std::vector<Move>* red_moves = _board->getMoves(true);
+        std::vector<Move>* black_moves = _board->getMoves(false);
 
-    std::cout << "Red moves: " << std::endl;
-    for (int i = 0; i < red_moves->size(); i++) {
-        showMove(&red_moves->at(i));
-        std::cout << " score " << red_moves->at(i).score << std::endl;
-    }
-    std::cout << "Black moves: " << std::endl;
-    for (int i = 0; i < black_moves->size(); i++) {
-        showMove(&black_moves->at(i));
-        std::cout << " score " << black_moves->at(i).score << std::endl;
+        std::cout << "Red moves: " << std::endl;
+        for (int i = 0; i < red_moves->size(); i++) {
+            showMove(&red_moves->at(i));
+            std::cout << " score " << red_moves->at(i).score << std::endl;
+        }
+        std::cout << "Black moves: " << std::endl;
+        for (int i = 0; i < black_moves->size(); i++) {
+            showMove(&black_moves->at(i));
+            std::cout << " score " << black_moves->at(i).score << std::endl;
+        }
     }
 
     std::cout << "The best move is: ";
     showMove(&best_move);
     std::cout << std::endl;
 
-    // std::string output_filename = "../output/output_" + std::to_string(fn) + ".txt";
+    // Output (eg: K (4,0) (5,0))
+    std::string output_filename = "../output/output_" + std::to_string(fn) + ".txt";
+    std::ofstream output_file(output_filename);
+    char piece = cur_board->at(best_move.init_y).at(best_move.init_x);
+    output_file << piece << " (" << best_move.init_x << ", " << 9 - best_move.init_y << ") ("
+                << best_move.next_x << ", " << 9 - best_move.next_y << ")" << std::endl;
+}
 
-    return 0;
+int main(int argc, char* argv[]) {
+    // 命令行参数：第一个参数为文件编号，第二个参数为搜索深度
+    int fn = -1;        // 默认文件编号
+    int maxDepth = 4;  // 默认搜索深度
+    if (argc > 1) {    // 命令行参数 fn
+        fn = std::stoi(argv[1]);
+    }
+    if (argc > 2) {  // 命令行参数 maxDepth
+        maxDepth = std::stoi(argv[2]);
+    }
+
+    if (fn == -1) {
+        for (int i = 1; i <= 10; i++) {
+            solve(i, maxDepth, false);
+        }
+    } else {
+        solve(fn, maxDepth, true);
+    }
 }

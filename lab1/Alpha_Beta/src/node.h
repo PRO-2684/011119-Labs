@@ -524,7 +524,8 @@ class ChessBoard {
             }
             JiangMoves.push_back(cur_move);  // 可以走
         }
-        // 飞将
+
+        // "飞将" - 对面直接判负
         int k1 = -1, k2 = -1;  // 黑、红两将的位置
         for (int i = 0; i < sizeX; i++) {
             if (k1 == -1 && board[i][x] == 'k') {
@@ -562,6 +563,8 @@ class ChessBoard {
         // 需要分条件考虑，小兵在过楚河汉界之前只能前进，之后可以左右前
         std::vector<Move> BingMoves;
         if (color) {  // 红色方
+            if (y - 1 < 0)
+                return;  // 超出棋盘范围
             Move cur_move = {x, y, x, y - 1, 0};
             if (board[y - 1][x] == '.' || colorOf(board[y - 1][x]) == false) {
                 BingMoves.push_back(cur_move);  // 可以前进或吃子
@@ -577,6 +580,8 @@ class ChessBoard {
                 }
             }
         } else {  // 黑色方
+            if (y + 1 >= sizeX)
+                return;  // 超出棋盘范围
             Move cur_move = {x, y, x, y + 1, 0};
             if (board[y + 1][x] == '.' || colorOf(board[y + 1][x]) == true) {
                 BingMoves.push_back(cur_move);  // 可以前进或吃子
@@ -684,16 +689,16 @@ class ChessBoard {
             }
         }
         // 行棋可能性评估：根据棋子下一步的可能动作来判断行棋的优劣
-        for (int i = 0; i < red_moves.size(); i++) {
-            int x = red_moves[i].next_x;
-            int y = red_moves[i].next_y;
-            red_score += next_move_values[std::string(1, toLower(board[y][x]))];
-        }
-        for (int i = 0; i < black_moves.size(); i++) {
-            int x = black_moves[i].next_x;
-            int y = black_moves[i].next_y;
-            black_score += next_move_values[std::string(1, toLower(board[y][x]))];
-        }
+        // for (int i = 0; i < red_moves.size(); i++) {
+        //     int x = red_moves[i].next_x;
+        //     int y = red_moves[i].next_y;
+        //     red_score += next_move_values[std::string(1, toLower(board[y][x]))];
+        // }
+        // for (int i = 0; i < black_moves.size(); i++) {
+        //     int x = black_moves[i].next_x;
+        //     int y = black_moves[i].next_y;
+        //     black_score += next_move_values[std::string(1, toLower(board[y][x]))];
+        // }
         return red_score - black_score;
     }
 
