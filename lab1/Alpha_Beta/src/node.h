@@ -8,7 +8,7 @@ namespace ChineseChess {
 // 棋力评估，这里的棋盘方向和输入棋盘方向不同，在使用时需要仔细
 // 生成合法动作代码部分已经使用，经过测试是正确的，大家可以参考
 
-// 非棋盘坐标系
+// 代码坐标系
 std::vector<std::vector<int>> JiangPosition = {
     {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
     {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
@@ -21,7 +21,7 @@ std::vector<std::vector<int>> JiangPosition = {
     {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
 };
 
-// 非棋盘坐标系
+// 代码坐标系
 std::vector<std::vector<int>> ShiPosition = {
     {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
     {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
@@ -34,7 +34,7 @@ std::vector<std::vector<int>> ShiPosition = {
     {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
 };
 
-// 非棋盘坐标系
+// 代码坐标系
 std::vector<std::vector<int>> XiangPosition = {
     {0, 0, -2, 0, 0, 0, 0, 0, 0, 0},
     {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
@@ -47,7 +47,7 @@ std::vector<std::vector<int>> XiangPosition = {
     {0, 0, -2, 0, 0, 0, 0, 0, 0, 0},
 };
 
-// 非棋盘坐标系
+// 代码坐标系
 std::vector<std::vector<int>> MaPosition = {
     {0, -3, 5, 4, 2, 2, 5, 4, 2, 2},
     {-3, 2, 4, 6, 10, 12, 20, 10, 8, 2},
@@ -60,7 +60,7 @@ std::vector<std::vector<int>> MaPosition = {
     {0, -3, 5, 4, 2, 2, 5, 4, 2, 2},
 };
 
-// 非棋盘坐标系
+// 代码坐标系
 std::vector<std::vector<int>> PaoPosition = {
     {0, 0, 1, 0, -1, 0, 0, 1, 2, 4},
     {0, 1, 0, 0, 0, 0, 3, 1, 2, 4},
@@ -73,7 +73,7 @@ std::vector<std::vector<int>> PaoPosition = {
     {0, 0, 1, 0, -1, 0, 0, 1, 2, 4},
 };
 
-// 非棋盘坐标系
+// 代码坐标系
 std::vector<std::vector<int>> JuPosition = {
     {-6, 5, -2, 4, 8, 8, 6, 6, 6, 6},
     {6, 8, 8, 9, 12, 11, 13, 8, 12, 8},
@@ -86,7 +86,7 @@ std::vector<std::vector<int>> JuPosition = {
     {-6, 5, -2, 4, 8, 8, 6, 6, 6, 6},
 };
 
-// 非棋盘坐标系
+// 代码坐标系
 std::vector<std::vector<int>> BingPosition = {
     {0, 0, 0, -2, 3, 10, 20, 20, 20, 0},
     {0, 0, 0, 0, 0, 18, 27, 30, 30, 0},
@@ -119,7 +119,7 @@ std::map<std::string, int> next_move_values = {
     {"p", -20}    // Bing
 };
 
-// 动作结构体，每个动作设置 score，可以方便剪枝 (非棋盘坐标系)
+// 动作结构体，每个动作设置 score，可以方便剪枝 (代码坐标系)
 struct Move {
     int init_x;
     int init_y;
@@ -128,7 +128,7 @@ struct Move {
     int score;
 };
 
-// 定义棋盘上的棋子结构体 (非棋盘坐标系)
+// 定义棋盘上的棋子结构体 (代码坐标系)
 struct ChessPiece {
     char name;           // 棋子名称
     int init_x, init_y;  // 棋子的坐标
@@ -139,10 +139,10 @@ struct ChessPiece {
 class ChessBoard {
    private:
     int sizeX, sizeY;                      // 棋盘大小，固定 (board[sizeX][sizeY])
-    std::vector<ChessPiece> pieces;        // 棋盘上所有棋子 (非棋盘坐标系)
+    std::vector<ChessPiece> pieces;        // 棋盘上所有棋子 (代码坐标系)
     std::vector<std::vector<char>> board;  // 当前棋盘、二维数组表示 (棋盘坐标系)
-    std::vector<Move> red_moves;           // 红方棋子的合法动作 (非棋盘坐标系)
-    std::vector<Move> black_moves;         // 黑方棋子的合法动作 (非棋盘坐标系)
+    std::vector<Move> red_moves;           // 红方棋子的合法动作 (代码坐标系)
+    std::vector<Move> black_moves;         // 黑方棋子的合法动作 (代码坐标系)
    public:
     // 判断颜色，红色返回 true，黑色返回 false
     bool colorOf(char piece) {
@@ -226,7 +226,7 @@ class ChessBoard {
         }
     }
 
-    // 生成车的合法动作 (非棋盘坐标系)
+    // 生成车的合法动作 (代码坐标系)
     void generateJuMoves(int x, int y, bool color) {
         // 前后左右分别进行搜索，遇到棋子停止，不同阵营可以吃掉
         std::vector<Move> JuMoves;
@@ -289,7 +289,7 @@ class ChessBoard {
         }
     }
 
-    // 生成马的合法动作 (非棋盘坐标系)
+    // 生成马的合法动作 (代码坐标系)
     void generateMaMoves(int x, int y, bool color) {
         // 遍历所有可能动作，筛选
         std::vector<Move> MaMoves;
@@ -324,7 +324,7 @@ class ChessBoard {
         }
     }
 
-    // 生成炮的合法动作 (非棋盘坐标系)
+    // 生成炮的合法动作 (代码坐标系)
     void generatePaoMoves(int x, int y, bool color) {
         // 和车生成动作相似，需要考虑炮翻山吃子的情况
         std::vector<Move> PaoMoves;
@@ -431,7 +431,7 @@ class ChessBoard {
         }
     }
 
-    // 生成相的合法动作 (非棋盘坐标系)
+    // 生成相的合法动作 (代码坐标系)
     void generateXiangMoves(int x, int y, bool color) {
         std::vector<Move> XiangMoves;
         int dx[] = {2, 2, -2, -2};
@@ -466,7 +466,7 @@ class ChessBoard {
         }
     }
 
-    // 生成士的合法动作 (非棋盘坐标系)
+    // 生成士的合法动作 (代码坐标系)
     void generateShiMoves(int x, int y, bool color) {
         std::vector<Move> ShiMoves;
         int dx[] = {1, 1, -1, -1};
@@ -501,7 +501,7 @@ class ChessBoard {
         }
     }
 
-    // 生成将的合法动作 (非棋盘坐标系)
+    // 生成将的合法动作 (代码坐标系)
     void generateJiangMoves(int x, int y, bool color) {
         std::vector<Move> JiangMoves;
         int dx[] = {1, 0, -1, 0};
@@ -536,7 +536,7 @@ class ChessBoard {
         }
     }
 
-    // 生成兵的合法动作 (非棋盘坐标系)
+    // 生成兵的合法动作 (代码坐标系)
     void generateBingMoves(int x, int y, bool color) {
         // 需要分条件考虑，小兵在过楚河汉界之前只能前进，之后可以左右前
         std::vector<Move> BingMoves;
@@ -608,7 +608,6 @@ class ChessBoard {
             int x = pieces[i].init_x;
             int y = pieces[i].init_y;
             char name = pieces[i].name;
-            char dest = board[y][x];
             // 棋力评估：对每个棋子的位置进行评分
             switch (name) {
                 case 'R':
@@ -656,18 +655,23 @@ class ChessBoard {
                 default:
                     break;
             }
-            // 行棋可能性评估：根据棋子下一步的可能动作来判断行棋的优劣
-            if (colorOf(name)) {
-                red_score += next_move_values[std::string(1, toLower(dest))];
-            } else {
-                black_score += next_move_values[std::string(1, toLower(dest))];
-            }
             // 棋子价值评估：各棋子的固定价值
             if (colorOf(name)) {
-                red_score += piece_values[std::string(1, toLower(dest))];
+                red_score += piece_values[std::string(1, toLower(name))];
             } else {
-                black_score += piece_values[std::string(1, toLower(dest))];
+                black_score += piece_values[std::string(1, toLower(name))];
             }
+        }
+        // 行棋可能性评估：根据棋子下一步的可能动作来判断行棋的优劣
+        for (int i = 0; i < red_moves.size(); i++) {
+            int x = red_moves[i].next_x;
+            int y = red_moves[i].next_y;
+            red_score += next_move_values[std::string(1, toLower(board[y][x]))];
+        }
+        for (int i = 0; i < black_moves.size(); i++) {
+            int x = black_moves[i].next_x;
+            int y = black_moves[i].next_y;
+            black_score += next_move_values[std::string(1, toLower(board[y][x]))];
         }
         return red_score - black_score;
     }
