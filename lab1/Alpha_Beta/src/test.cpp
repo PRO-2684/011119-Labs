@@ -62,7 +62,7 @@ int alphaBeta(GameTreeNode* node, int alpha, int beta, int depth, bool isMaximiz
 }
 
 void solve(int fn, int maxDepth, bool debug) {
-    std::cout << "Solving file " << fn << std::endl;
+    std::cout << "File #" << fn << ": ";
     std::string filename = "../input/" + std::to_string(fn) + ".txt";
     std::ifstream file(filename);
     std::string line;
@@ -83,10 +83,10 @@ void solve(int fn, int maxDepth, bool debug) {
     file.close();
     GameTreeNode root(true, board, std::numeric_limits<int>::min());
 
-    // DONE: 调用 alphaBeta 函数
     Move best_move;
     int score = alphaBeta(&root, std::numeric_limits<int>::min(), std::numeric_limits<int>::max(), maxDepth, true, &best_move);
-    std::cout << "The best score is " << score << std::endl;
+    showMove(&best_move);
+    std::cout << " (score = " << score << ")" << std::endl;
 
     // 代码测试
     ChessBoard* _board = root.getBoardClass();
@@ -115,11 +115,6 @@ void solve(int fn, int maxDepth, bool debug) {
         }
     }
 
-    std::cout << "The best move is: ";
-    showMove(&best_move);
-    std::cout << std::endl;
-
-    // Output (eg: K (4,0) (5,0))
     std::string output_filename = "../output/output_" + std::to_string(fn) + ".txt";
     std::ofstream output_file(output_filename);
     char piece = cur_board->at(best_move.init_y).at(best_move.init_x);
