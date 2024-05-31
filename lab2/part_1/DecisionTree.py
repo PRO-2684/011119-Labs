@@ -31,26 +31,27 @@ class DecisionTreeClassifier:
 
 def load_data(datapath: str = "./data/ObesityDataSet_raw_and_data_sinthetic.csv"):
     df = pd.read_csv(datapath)
-    continue_features = [
-        "Age",
-        "Height",
-        "Weight",
-    ]
+    continue_features = ["Age", "Height", "Weight", "FCVC", "NCP", "CH2O", "FAF", "TUE"]
     discrete_features = [
         "Gender",
         "CALC",
         "FAVC",
-        "FCVC",
-        "NCP",
         "SCC",
         "SMOKE",
-        "CH2O",
         "family_history_with_overweight",
-        "FAF",
-        "TUE",
         "CAEC",
         "MTRANS",
     ]
+    discrete_features_size = {
+        "Gender": 2,
+        "CALC": 4,
+        "FAVC": 2,
+        "SCC": 2,
+        "SMOKE": 2,
+        "family_history_with_overweight": 2,
+        "CAEC": 4,
+        "MTRANS": 5,
+    }
 
     X, y = df.iloc[:, :-1], df.iloc[:, -1]
     # encode discrete str to number, eg. male&female to 0&1
