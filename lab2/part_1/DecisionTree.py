@@ -32,30 +32,18 @@ def entropy(y):
     return -np.sum([p * np.log2(p) for p in ps if p > 0])
 
 
-def gini(y):
-    """Calculate the Gini impurity of a label array."""
-    hist = np.bincount(y)
-    ps = hist / len(y)
-    return 1 - np.sum([p**2 for p in ps])
-
-
-def information_gain(y, mask, criterion="entropy"):
+def information_gain(y, mask):
     """Calculate the information gain of a split."""
-    if criterion == "entropy":
-        criterion_func = entropy
-    else:
-        criterion_func = gini
-
     n = len(y)
     n_l, n_r = np.sum(mask), np.sum(~mask)
     if n_l == 0 or n_r == 0:
         return 0
-    e_l, e_r = criterion_func(y[mask]), criterion_func(y[~mask])
-    e = criterion_func(y)
+    e_l, e_r = entropy(y[mask]), entropy(y[~mask])
+    e = entropy(y)
     return e - (n_l / n) * e_l - (n_r / n) * e_r
 
 
-def best_split(x, y, criterion="entropy"):
+def best_split(x, y):
     """Find the best split for the data."""
     best_gain = 0
     split_index, split_threshold = None, None
@@ -65,7 +53,7 @@ def best_split(x, y, criterion="entropy"):
             if classes[j] == classes[j - 1]:
                 continue
             mask = x[:, i] <= thresholds[j]
-            gain = information_gain(y, mask, criterion)
+            gain = information_gain(y, mask)
             if gain > best_gain:
                 best_gain = gain
                 split_index = i
@@ -77,7 +65,6 @@ def best_split(x, y, criterion="entropy"):
 @dataclass
 class Node:
     """A class representing a single node in the decision tree."""
-    gini: float
     num_samples: int
     num_samples_per_class: list
     predicted_class: int
@@ -105,7 +92,6 @@ class DecisionTreeClassifier:
         num_samples_per_class = [np.sum(y == i) for i in range(self.n_classes)]
         predicted_class = np.argmax(num_samples_per_class)
         node = Node(
-            gini=gini(y),
             num_samples=y.size,
             num_samples_per_class=num_samples_per_class,
             predicted_class=predicted_class,
