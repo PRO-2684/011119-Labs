@@ -4,6 +4,19 @@ from sklearn.preprocessing import LabelEncoder
 import numpy as np
 import pandas as pd
 
+# Features
+continuous_features = ["Age", "Height", "Weight", "FCVC", "NCP", "CH2O", "FAF", "TUE"]
+discrete_features = {
+    "Gender": 2,
+    "CALC": 4,
+    "FAVC": 2,
+    "SCC": 2,
+    "SMOKE": 2,
+    "family_history_with_overweight": 2,
+    "CAEC": 4,
+    "MTRANS": 5,
+}
+
 
 # Metrics
 def accuracy(y_true, y_pred):
@@ -31,34 +44,12 @@ class DecisionTreeClassifier:
 
 def load_data(datapath: str = "./data/ObesityDataSet_raw_and_data_sinthetic.csv"):
     df = pd.read_csv(datapath)
-    continue_features = ["Age", "Height", "Weight", "FCVC", "NCP", "CH2O", "FAF", "TUE"]
-    discrete_features = [
-        "Gender",
-        "CALC",
-        "FAVC",
-        "SCC",
-        "SMOKE",
-        "family_history_with_overweight",
-        "CAEC",
-        "MTRANS",
-    ]
-    discrete_features_size = {
-        "Gender": 2,
-        "CALC": 4,
-        "FAVC": 2,
-        "SCC": 2,
-        "SMOKE": 2,
-        "family_history_with_overweight": 2,
-        "CAEC": 4,
-        "MTRANS": 5,
-    }
-
     x, y = df.iloc[:, :-1], df.iloc[:, -1]
     # Encode discrete str to number, e.g. male&female to 0&1
-    labelencoder = LabelEncoder()
-    for col in discrete_features:
-        x[col] = labelencoder.fit(x[col]).transform(x[col])
-    y = labelencoder.fit(y).fit_transform(y)
+    encoder = LabelEncoder()
+    for col in discrete_features.keys():
+        x[col] = encoder.fit(x[col]).transform(x[col])
+    y = encoder.fit(y).fit_transform(y)
 
     x_train, x_test, y_train, y_test = train_test_split(
         x, y, test_size=0.2, random_state=42
