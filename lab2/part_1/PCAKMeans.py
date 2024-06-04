@@ -139,13 +139,15 @@ def load_data():
 
 if __name__ == "__main__":
     words, data = load_data()
-    pca = PCA(n_components=2).fit(data)
+    pca = PCA(n_components=2)
+    pca.fit(data)
     data_pca = pca.transform(data)
 
-    kmeans = KMeans(n_clusters=7).fit(data_pca)
+    kmeans = KMeans(n_clusters=7)
+    kmeans.fit(data_pca)
     clusters = kmeans.predict(data_pca)
 
-    # plot the data
+    # Plot the data
 
     plt.figure()
     plt.scatter(data_pca[:, 0], data_pca[:, 1], c=clusters)
