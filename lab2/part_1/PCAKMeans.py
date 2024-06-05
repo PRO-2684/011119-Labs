@@ -1,9 +1,17 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from gensim.models import KeyedVectors
+from typing import Callable
 
 
-def get_kernel_function(kernel: str):
+kernel_functions = {
+    "linear": lambda x, y: np.dot(x, y),
+    "poly": lambda x, y, p=3: (np.dot(x, y) + 1) ** p,
+    "rbf": lambda x, y, gamma=0.1: np.exp(-gamma * np.linalg.norm(x - y) ** 2),
+}
+
+
+def get_kernel_function(kernel: str) -> Callable[[np.ndarray, np.ndarray], float]:
     """
     Returns the kernel function based on the given kernel type.
 
@@ -13,14 +21,7 @@ def get_kernel_function(kernel: str):
     Returns:
     function: The kernel function.
     """
-    if kernel == "linear":
-        return lambda x, y: np.dot(x, y)
-    elif kernel == "poly":
-        return lambda x, y, p=3: (np.dot(x, y) + 1) ** p
-    elif kernel == "rbf":
-        return lambda x, y, gamma=0.1: np.exp(-gamma * np.linalg.norm(x - y) ** 2)
-    else:
-        raise ValueError(f"Unsupported kernel: {kernel}")
+    return kernel_functions[kernel]
 
 
 class PCA:
@@ -39,7 +40,7 @@ class PCA:
         self.eig_vecs = None
         self.eig_vals = None
 
-    def fit(self, X: np.ndarray):
+    def fit(self, X: np.ndarray) -> None:
         """
         Fits the PCA model on the given data.
 
@@ -66,10 +67,10 @@ class PCA:
         # Compute eigenvalues and eigenvectors
         eig_vals, eig_vecs = np.linalg.eigh(covariance_matrix)
         sorted_indices = np.argsort(eig_vals)[::-1]
-        self.eig_vals = eig_vals[sorted_indices][:self.n_components]
-        self.eig_vecs = eig_vecs[:, sorted_indices][:, :self.n_components]
+        self.eig_vals = eig_vals[sorted_indices][: self.n_components]
+        self.eig_vecs = eig_vecs[:, sorted_indices][:, : self.n_components]
 
-    def transform(self, X: np.ndarray):
+    def transform(self, X: np.ndarray) -> np.ndarray:
         """
         Transforms the data to the new basis.
 
@@ -111,7 +112,7 @@ class KMeans:
         self.centers = None
         self.labels = None
 
-    def initialize_centers(self, points):
+    def initialize_centers(self, points) -> np.ndarray:
         """
         Initializes the cluster centers.
 
@@ -128,7 +129,7 @@ class KMeans:
             self.centers[k] = points[random_index].mean(axis=0)
         return self.centers
 
-    def assign_points(self, points):
+    def assign_points(self, points) -> np.ndarray:
         """
         Assigns each point to the nearest cluster center.
 
@@ -145,7 +146,7 @@ class KMeans:
             self.labels[i] = np.argmin(distances)
         return self.labels
 
-    def update_centers(self, points):
+    def update_centers(self, points) -> None:
         """
         Updates the cluster centers based on the assigned points.
 
@@ -157,7 +158,7 @@ class KMeans:
             if len(cluster_points) > 0:
                 self.centers[k] = cluster_points.mean(axis=0)
 
-    def fit(self, points):
+    def fit(self, points) -> None:
         """
         Fits the KMeans model on the given data.
 
@@ -172,7 +173,7 @@ class KMeans:
             if np.all(old_centers == self.centers):
                 break
 
-    def predict(self, points):
+    def predict(self, points) -> np.ndarray:
         """
         Predicts the closest cluster for each point.
 
@@ -185,7 +186,7 @@ class KMeans:
         return self.assign_points(points)
 
 
-def load_data():
+def load_data() -> tuple[list, np.ndarray]:
     """
     Loads the word vectors from the pre-trained Word2Vec model.
 
