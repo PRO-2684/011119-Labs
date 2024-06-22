@@ -96,11 +96,6 @@ def create_dataloader(filepath, tokenizer, chunk_size, batch_size, shuffle=True)
     return train_dataloader, val_dataloader
 
 
-# train_dataloader, val_dataloader = create_dataloader(
-#     "input.txt", tokenizer, chunk_size=200, batch_size=2
-# )
-
-
 class HeadAttention(nn.Module):
     def __init__(self, seq_len: int, embed_size: int, hidden_size: int):
         super().__init__()
@@ -485,6 +480,6 @@ torch.save(model.state_dict(), "model.pth")
 model.load_state_dict(torch.load("model.pth"))
 print(
     tokenizer.decode(
-        model.generate("I could pick my lance", max_new_tokens=100)[0].tolist()
+        model.generate("I could pick my lance", max_new_tokens=100)[0]
     )
 )
