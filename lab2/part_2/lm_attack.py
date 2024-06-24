@@ -95,7 +95,7 @@ def token_gradients(model, input_ids, input_slice, target_slice, loss_slice):
     embed_weights = get_embedding_matrix(model)
 
     # ==================需要你实现的部分==================
-    # FIXME: input_ids 是整个输入的 token_id, 但是我们只需要计算 input_slice 的梯度
+    # DONE: input_ids 是整个输入的 token_id, 但是我们只需要计算 input_slice 的梯度
     # 1. 先定义一个 zero tensor，shape 为 (input_slice_len, vocab_size)
     # vocab_size 是词表大小，思考词表大小对应模型的什么矩阵的哪一维
     vocab_size = embed_weights.shape[0]
@@ -106,16 +106,16 @@ def token_gradients(model, input_ids, input_slice, target_slice, loss_slice):
         dtype=embed_weights.dtype
     )
 
-    # FIXME: 2. 将 one_hot 中对应的 token_id 的位置置为 1
+    # DONE: 2. 将 one_hot 中对应的 token_id 的位置置为 1
     one_hot.scatter_(1, input_ids[input_slice].unsqueeze(1), torch.ones(one_hot.shape[0], 1, device=model.device, dtype=embed_weights.dtype))
     one_hot.requires_grad_()
 
-    # FIXME: 3. 将 one_hot 乘以 embedding 矩阵，得到 input_slice 的 embedding，注意我们需要梯度
+    # DONE: 3. 将 one_hot 乘以 embedding 矩阵，得到 input_slice 的 embedding，注意我们需要梯度
     input_embeds = (one_hot @ embed_weights).unsqueeze(0)
 
     embeds = get_embeddings(model, input_ids.unsqueeze(0)).detach()
 
-    # FIXME: 4. 用 input_embeds 替换 embedding 的对应部分（可以拼接），拿到 logits 之后和 target 进行 loss 计算
+    # DONE: 4. 用 input_embeds 替换 embedding 的对应部分（可以拼接），拿到 logits 之后和 target 进行 loss 计算
     full_embeds = torch.cat(
         [
             embeds[:,:input_slice.start,:],
@@ -147,10 +147,10 @@ def sample_control(control_toks, grad, batch_size):
     # 拿到梯度之后，我们可以使用梯度来采样新的控制 token
     # ==================需要你实现的部分==================
     control_toks = control_toks.to(grad.device)
-    # FIXME: 重复 batch_size 次（随机采样的次数） -> (batch_size, len(control_toks))
+    # DONE: 重复 batch_size 次（随机采样的次数） -> (batch_size, len(control_toks))
     original_control_toks = control_toks.repeat(batch_size, 1)
 
-    # FIXME: 生成 batch_size 个新的 token 位置作为采样的位置，允许复选
+    # DONE: 生成 batch_size 个新的 token 位置作为采样的位置，允许复选
     new_token_pos = torch.arange(
             0,
             len(control_toks),
@@ -158,18 +158,18 @@ def sample_control(control_toks, grad, batch_size):
             device=grad.device
         ).type(torch.int64)
 
-    # FIXME: 利用梯度的 topk 来获取每个 token 位置上梯度最大的 topk 个 token 的索引
+    # DONE: 利用梯度的 topk 来获取每个 token 位置上梯度最大的 topk 个 token 的索引
     # https://pytorch.org/docs/stable/generated/torch.topk.html
     top_indices = torch.topk(-grad, topk, dim=1).indices
 
-    # FIXME: 从 top_indices 中的 new_token_pos （作为 index）随机采样一个 topk token 的索引，作为新的 token
+    # DONE: 从 top_indices 中的 new_token_pos （作为 index）随机采样一个 topk token 的索引，作为新的 token
     new_token_val = torch.gather(
         top_indices[new_token_pos], 1,
         torch.randint(0, topk, (batch_size, 1),
         device=grad.device)
     )
 
-    # FIXME: 得到新的 control tokens
+    # DONE: 得到新的 control tokens
     new_control_toks = original_control_toks.scatter_(1, new_token_pos.unsqueeze(-1), new_token_val)
 
     # ==================需要实现的部分结束==================
@@ -302,13 +302,14 @@ def target_loss(logits, ids, target_slice):
     loss = crit(logits[:, loss_slice, :].transpose(1, 2), ids[:, target_slice])
     return loss.mean(dim=-1)
 
+MAX_NEW_TOKENS = 50
 
 def is_success(prompt):
     # ==================需要你实现的部分==================
-    # FIXME: 这部分需要你实现判断是否攻击成功的逻辑。用你的 prompt 进行一次推理，
+    # DONE: 这部分需要你实现判断是否攻击成功的逻辑。用你的 prompt 进行一次推理，
     # 然后判断输出中是否包含 target，如果包含则返回 True，否则返回 False
     input_ids = tokenizer.encode(prompt, return_tensors="pt").to(device)
-    output = model.generate(input_ids)
+    output = model.generate(input_ids, max_new_tokens=MAX_NEW_TOKENS)
     output_text = tokenizer.decode(output[0], skip_special_tokens=True)
 
     # ==================需要实现的部分结束==================
@@ -321,7 +322,7 @@ def is_success(prompt):
 plotlosses = PlotLosses()
 
 # ==========需要你实现的部分==========
-# FIXME: 定义 adv_slice, target_slice, loss_slice
+# DONE: 定义 adv_slice, target_slice, loss_slice
 adv_prefix_len = len(tokenizer.encode(adv_prefix, add_special_tokens=False))
 target_len = len(tokenizer.encode(target, add_special_tokens=False))
 adv_slice = slice(0, adv_prefix_len)
