@@ -99,28 +99,39 @@ def token_gradients(model, input_ids, input_slice, target_slice, loss_slice):
     # 1. 先定义一个 zero tensor，shape 为 (input_slice_len, vocab_size)
     # vocab_size 是词表大小，思考词表大小对应模型的什么矩阵的哪一维
     vocab_size = embed_weights.shape[0]
-    one_hot = torch.zeros((input_slice.stop - input_slice.start, vocab_size), device=device)
-
+    one_hot = torch.zeros(
+        input_ids[input_slice].shape[0],
+        vocab_size,
+        device=model.device,
+        dtype=embed_weights.dtype
+    )
 
     # FIXME: 2. 将 one_hot 中对应的 token_id 的位置置为 1
-    one_hot.scatter_(1, input_ids[input_slice].unsqueeze(1), 1)
+    one_hot.scatter_(1, input_ids[input_slice].unsqueeze(1), torch.ones(one_hot.shape[0], 1, device=model.device, dtype=embed_weights.dtype))
+    one_hot.requires_grad_()
 
     # FIXME: 3. 将 one_hot 乘以 embedding 矩阵，得到 input_slice 的 embedding，注意我们需要梯度
-    input_embeds = one_hot @ embed_weights
-    input_embeds = input_embeds.clone().detach().requires_grad_(True)
+    input_embeds = (one_hot @ embed_weights).unsqueeze(0)
 
     embeds = get_embeddings(model, input_ids.unsqueeze(0)).detach()
 
     # FIXME: 4. 用 input_embeds 替换 embedding 的对应部分（可以拼接），拿到 logits 之后和 target 进行 loss 计算
-
-    full_embeds = embeds.clone()
-    full_embeds[:, input_slice, :] = input_embeds.unsqueeze(0)
+    full_embeds = torch.cat(
+        [
+            embeds[:,:input_slice.start,:],
+            input_embeds,
+            embeds[:,input_slice.stop:,:]
+        ],
+        dim=1
+    )
+    # full_embeds = embeds.clone()
+    # full_embeds[:, input_slice] = input_embeds
     logits = model(inputs_embeds=full_embeds).logits
     targets = input_ids[target_slice]
-    loss = nn.CrossEntropyLoss()(logits[:, loss_slice, :].view(-1, logits.size(-1)), targets.view(-1))
+
+    loss = nn.CrossEntropyLoss()(logits[0, loss_slice, :], targets)
 
     # ==================需要实现的部分结束==================
-
     loss.backward()
 
     grad = one_hot.grad.clone()
@@ -137,22 +148,29 @@ def sample_control(control_toks, grad, batch_size):
     # ==================需要你实现的部分==================
     control_toks = control_toks.to(grad.device)
     # FIXME: 重复 batch_size 次（随机采样的次数） -> (batch_size, len(control_toks))
-    original_control_toks = control_toks.unsqueeze(0).repeat(batch_size, 1)
+    original_control_toks = control_toks.repeat(batch_size, 1)
 
     # FIXME: 生成 batch_size 个新的 token 位置作为采样的位置，允许复选
-    new_token_pos = torch.randint(0, control_toks.shape[0], (batch_size,))
-    new_token_pos = new_token_pos.type(torch.int64)
+    new_token_pos = torch.arange(
+            0,
+            len(control_toks),
+            len(control_toks) / batch_size,
+            device=grad.device
+        ).type(torch.int64)
 
     # FIXME: 利用梯度的 topk 来获取每个 token 位置上梯度最大的 topk 个 token 的索引
     # https://pytorch.org/docs/stable/generated/torch.topk.html
-    top_indices = torch.topk(grad, topk, dim=1).indices
+    top_indices = torch.topk(-grad, topk, dim=1).indices
 
     # FIXME: 从 top_indices 中的 new_token_pos （作为 index）随机采样一个 topk token 的索引，作为新的 token
-    new_token_val = top_indices[range(batch_size), new_token_pos]
+    new_token_val = torch.gather(
+        top_indices[new_token_pos], 1,
+        torch.randint(0, topk, (batch_size, 1),
+        device=grad.device)
+    )
 
     # FIXME: 得到新的 control tokens
-    new_control_toks = original_control_toks.clone()
-    new_control_toks[range(batch_size), new_token_pos] = new_token_val
+    new_control_toks = original_control_toks.scatter_(1, new_token_pos.unsqueeze(-1), new_token_val)
 
     # ==================需要实现的部分结束==================
 
@@ -304,9 +322,11 @@ plotlosses = PlotLosses()
 
 # ==========需要你实现的部分==========
 # FIXME: 定义 adv_slice, target_slice, loss_slice
-adv_slice = slice(0, len(adv_prefix))
-target_slice = slice(len(adv_prefix), len(adv_prefix) + len(target))
-loss_slice = slice(1, len(adv_prefix) + len(target))
+adv_prefix_len = len(tokenizer.encode(adv_prefix, add_special_tokens=False))
+target_len = len(tokenizer.encode(target, add_special_tokens=False))
+adv_slice = slice(0, adv_prefix_len)
+target_slice = slice(adv_prefix_len, adv_prefix_len + target_len)
+loss_slice = slice(adv_prefix_len - 1, adv_prefix_len + target_len - 1)
 # ==========需要实现的部分结束==========
 
 for i in range(num_steps):
