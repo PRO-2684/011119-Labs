@@ -161,3 +161,5 @@ cython_debug/
 
 *.exe
 GoogleNews-vectors-negative300.bin
+TinyStories-33M
+model.pth
