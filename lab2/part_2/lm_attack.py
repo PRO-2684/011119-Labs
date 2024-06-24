@@ -99,7 +99,7 @@ def token_gradients(model, input_ids, input_slice, target_slice, loss_slice):
     # 1. 先定义一个 zero tensor，shape 为 (input_slice_len, vocab_size)
     # vocab_size 是词表大小，思考词表大小对应模型的什么矩阵的哪一维
     vocab_size = embed_weights.shape[0]
-    one_hot = torch.zeros((input_slice.stop - input_slice.start, vocab_size), requires_grad=True).to(device)
+    one_hot = torch.zeros((input_slice.stop - input_slice.start, vocab_size), device=device)
 
 
     # FIXME: 2. 将 one_hot 中对应的 token_id 的位置置为 1
@@ -107,7 +107,7 @@ def token_gradients(model, input_ids, input_slice, target_slice, loss_slice):
 
     # FIXME: 3. 将 one_hot 乘以 embedding 矩阵，得到 input_slice 的 embedding，注意我们需要梯度
     input_embeds = one_hot @ embed_weights
-    input_embeds.requires_grad = True
+    input_embeds = input_embeds.clone().detach().requires_grad_(True)
 
     embeds = get_embeddings(model, input_ids.unsqueeze(0)).detach()
 
